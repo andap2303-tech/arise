@@ -1,0 +1,521 @@
+{
+  "stravaActivities": [
+    {
+      "id": "19245730696",
+      "date": "2026-07-09",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 46,
+      "distanceKm": 7.1,
+      "calories": 505
+    },
+    {
+      "id": "19225513758",
+      "date": "2026-07-08",
+      "title": "Morning Swim",
+      "sport": "Swim",
+      "durationMin": 18,
+      "distanceKm": 1,
+      "calories": 197
+    },
+    {
+      "id": "19204054677",
+      "date": "2026-07-06",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 26,
+      "distanceKm": 5,
+      "calories": 357
+    },
+    {
+      "id": "19140451850",
+      "date": "2026-07-01",
+      "title": "Evening Workout",
+      "sport": "Tennis",
+      "durationMin": 90,
+      "calories": 719
+    },
+    {
+      "id": "19039842924",
+      "date": "2026-06-23",
+      "title": "Evening Workout",
+      "sport": "Padel",
+      "durationMin": 93,
+      "calories": 644
+    },
+    {
+      "id": "18973987931",
+      "date": "2026-06-18",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 79,
+      "calories": 527
+    },
+    {
+      "id": "18947012468",
+      "date": "2026-06-16",
+      "title": "Evening Workout",
+      "sport": "WeightTraining",
+      "durationMin": 61,
+      "calories": 334
+    },
+    {
+      "id": "18940590632",
+      "date": "2026-06-15",
+      "title": "Evening Workout",
+      "sport": "WeightTraining",
+      "durationMin": 60,
+      "calories": 262
+    },
+    {
+      "id": "18921112930",
+      "date": "2026-06-14",
+      "title": "Evening Workout",
+      "sport": "Tennis",
+      "durationMin": 69,
+      "calories": 470
+    },
+    {
+      "id": "18888640080",
+      "date": "2026-06-12",
+      "title": "Lunch Workout",
+      "sport": "Tennis",
+      "durationMin": 74,
+      "calories": 639
+    },
+    {
+      "id": "18881131960",
+      "date": "2026-06-11",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 111,
+      "calories": 788
+    },
+    {
+      "id": "18863101171",
+      "date": "2026-06-10",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 62,
+      "calories": 338
+    },
+    {
+      "id": "18852399909",
+      "date": "2026-06-09",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 62,
+      "calories": 409
+    },
+    {
+      "id": "18821764370",
+      "date": "2026-06-07",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 63,
+      "calories": 286
+    },
+    {
+      "id": "18807260485",
+      "date": "2026-06-06",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 55,
+      "calories": 205
+    },
+    {
+      "id": "18785549288",
+      "date": "2026-06-04",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 108,
+      "calories": 765
+    },
+    {
+      "id": "18774789699",
+      "date": "2026-06-03",
+      "title": "Evening Workout",
+      "sport": "Tennis",
+      "durationMin": 97,
+      "calories": 725
+    },
+    {
+      "id": "18739916685",
+      "date": "2026-06-01",
+      "title": "Lunch Run",
+      "sport": "Run",
+      "durationMin": 27,
+      "distanceKm": 5,
+      "calories": 354
+    },
+    {
+      "id": "18713244239",
+      "date": "2026-05-30",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 62,
+      "calories": 259
+    },
+    {
+      "id": "18699828426",
+      "date": "2026-05-29",
+      "title": "Morning Workout",
+      "sport": "Tennis",
+      "durationMin": 81,
+      "calories": 747
+    },
+    {
+      "id": "18691211617",
+      "date": "2026-05-28",
+      "title": "Afternoon Workout",
+      "sport": "WeightTraining",
+      "durationMin": 61,
+      "calories": 345
+    },
+    {
+      "id": "18676933012",
+      "date": "2026-05-27",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 58,
+      "calories": 565
+    },
+    {
+      "id": "18662842885",
+      "date": "2026-05-26",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 53,
+      "calories": 419
+    },
+    {
+      "id": "18609250583",
+      "date": "2026-05-22",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 92,
+      "calories": 731
+    },
+    {
+      "id": "18608119569",
+      "date": "2026-05-22",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 48,
+      "calories": 245
+    },
+    {
+      "id": "18583383284",
+      "date": "2026-05-20",
+      "title": "Afternoon Workout ☔️",
+      "sport": "Tennis",
+      "durationMin": 20,
+      "calories": 154
+    },
+    {
+      "id": "18570105445",
+      "date": "2026-05-19",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 76,
+      "calories": 576
+    },
+    {
+      "id": "18557785126",
+      "date": "2026-05-18",
+      "title": "Afternoon Workout",
+      "sport": "Padel",
+      "durationMin": 105,
+      "calories": 733
+    },
+    {
+      "id": "18553007318",
+      "date": "2026-05-18",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 63,
+      "calories": 294
+    },
+    {
+      "id": "18514678408",
+      "date": "2026-05-15",
+      "title": "Lunch Workout",
+      "sport": "Tennis",
+      "durationMin": 69,
+      "calories": 556
+    },
+    {
+      "id": "18502508404",
+      "date": "2026-05-14",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 63,
+      "calories": 410
+    },
+    {
+      "id": "18475623415",
+      "date": "2026-05-12",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 59,
+      "calories": 258
+    },
+    {
+      "id": "18397326229",
+      "date": "2026-05-06",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 55,
+      "calories": 261
+    },
+    {
+      "id": "18383656895",
+      "date": "2026-05-05",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 55,
+      "calories": 329
+    },
+    {
+      "id": "18375230081",
+      "date": "2026-05-04",
+      "title": "Recovery run",
+      "sport": "Run",
+      "durationMin": 30,
+      "distanceKm": 4.1,
+      "calories": 320
+    },
+    {
+      "id": "18357694871",
+      "date": "2026-05-03",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 65,
+      "calories": 400
+    },
+    {
+      "id": "18344524380",
+      "date": "2026-05-02",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 64,
+      "calories": 424
+    },
+    {
+      "id": "18270034664",
+      "date": "2026-04-26",
+      "title": "Evening Workout",
+      "sport": "Padel",
+      "durationMin": 81,
+      "calories": 577
+    },
+    {
+      "id": "18237367445",
+      "date": "2026-04-24",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 56,
+      "calories": 270
+    },
+    {
+      "id": "18227330734",
+      "date": "2026-04-23",
+      "title": "Afternoon Workout",
+      "sport": "Tennis",
+      "durationMin": 94,
+      "calories": 699
+    },
+    {
+      "id": "18201437930",
+      "date": "2026-04-21",
+      "title": "Evening Weight Training",
+      "sport": "WeightTraining",
+      "durationMin": 71
+    },
+    {
+      "id": "18186863849",
+      "date": "2026-04-20",
+      "title": "Evening Workout",
+      "sport": "WeightTraining",
+      "durationMin": 77,
+      "calories": 526
+    },
+    {
+      "id": "18175131836",
+      "date": "2026-04-19",
+      "title": "Afternoon Padel",
+      "sport": "Padel",
+      "durationMin": 100,
+      "calories": 710
+    },
+    {
+      "id": "18044936913",
+      "date": "2026-04-09",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 32,
+      "distanceKm": 5.7,
+      "calories": 374
+    },
+    {
+      "id": "17990611793",
+      "date": "2026-04-05",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 33,
+      "distanceKm": 6.4,
+      "calories": 430
+    },
+    {
+      "id": "17838973417",
+      "date": "2026-03-24",
+      "title": "Lunch Run",
+      "sport": "Run",
+      "durationMin": 41,
+      "distanceKm": 7.5,
+      "calories": 526
+    },
+    {
+      "id": "17830191633",
+      "date": "2026-03-23",
+      "title": "Afternoon Workout",
+      "sport": "Padel",
+      "durationMin": 53,
+      "calories": 374
+    },
+    {
+      "id": "17740023647",
+      "date": "2026-03-16",
+      "title": "Morning Run",
+      "sport": "Run",
+      "durationMin": 28,
+      "distanceKm": 5,
+      "calories": 350
+    },
+    {
+      "id": "17576999306",
+      "date": "2026-03-02",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 64,
+      "calories": 338
+    },
+    {
+      "id": "17469233248",
+      "date": "2026-02-21",
+      "title": "Morning Run",
+      "sport": "Run",
+      "durationMin": 21,
+      "distanceKm": 4.3,
+      "calories": 253
+    },
+    {
+      "id": "17425379214",
+      "date": "2026-02-17",
+      "title": "Morning Workout",
+      "sport": "WeightTraining",
+      "durationMin": 58,
+      "calories": 305
+    },
+    {
+      "id": "17274624828",
+      "date": "2026-02-03",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 65,
+      "calories": 352
+    },
+    {
+      "id": "17192938384",
+      "date": "2026-01-27",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 81,
+      "calories": 471
+    },
+    {
+      "id": "17163834231",
+      "date": "2026-01-24",
+      "title": "Afternoon Run",
+      "sport": "Run",
+      "durationMin": 47,
+      "distanceKm": 8.9,
+      "calories": 537
+    },
+    {
+      "id": "17138076720",
+      "date": "2026-01-22",
+      "title": "Lunch Workout",
+      "sport": "WeightTraining",
+      "durationMin": 65,
+      "calories": 431
+    },
+    {
+      "id": "17118317090",
+      "date": "2026-01-20",
+      "title": "Afternoon Workout",
+      "sport": "WeightTraining",
+      "durationMin": 60,
+      "calories": 312
+    },
+    {
+      "id": "17051266614",
+      "date": "2026-01-14",
+      "title": "Evening Workout",
+      "sport": "WeightTraining",
+      "durationMin": 41,
+      "calories": 297
+    },
+    {
+      "id": "17035969390",
+      "date": "2026-01-13",
+      "title": "Afternoon Workout",
+      "sport": "WeightTraining",
+      "durationMin": 59,
+      "calories": 378
+    },
+    {
+      "id": "17014220052",
+      "date": "2026-01-11",
+      "title": "Afternoon Run",
+      "sport": "Run",
+      "durationMin": 40,
+      "distanceKm": 6.9,
+      "calories": 443
+    },
+    {
+      "id": "16981936905",
+      "date": "2026-01-08",
+      "title": "Afternoon Padel",
+      "sport": "Tennis",
+      "durationMin": 80,
+      "calories": 658
+    },
+    {
+      "id": "16948294912",
+      "date": "2026-01-05",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 62,
+      "distanceKm": 9,
+      "calories": 741
+    },
+    {
+      "id": "16915387398",
+      "date": "2026-01-02",
+      "title": "Evening Run",
+      "sport": "Run",
+      "durationMin": 32,
+      "distanceKm": 5,
+      "calories": 392
+    },
+    {
+      "id": "16905900567",
+      "date": "2026-01-01",
+      "title": "Evening Workout",
+      "sport": "WeightTraining",
+      "durationMin": 68,
+      "calories": 473
+    }
+  ]
+}
