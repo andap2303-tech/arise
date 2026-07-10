@@ -1,0 +1,43 @@
+name: Promemoria missioni
+
+on:
+  schedule:
+    # 14:00 UTC = 16:00 in Italia (ora legale). In inverno arriverà alle 15:00
+    # — se dà fastidio, cambiare in '0 15 * * *' a ottobre.
+    - cron: '0 14 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Invia la notifica push
+        env:
+          VAPID_PUBLIC: ${{ secrets.VAPID_PUBLIC }}
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+        run: |
+          if [ -z "$PUSH_SUBSCRIPTION" ]; then
+            echo "Nessuna subscription configurata: salto."
+            exit 0
+          fi
+          npm install --no-save web-push@3
+          node -e '
+            const webpush = require("web-push");
+            webpush.setVapidDetails(
+              "mailto:andap2303@gmail.com",
+              process.env.VAPID_PUBLIC,
+              process.env.VAPID_PRIVATE,
+            );
+            const sub = JSON.parse(process.env.PUSH_SUBSCRIPTION);
+            webpush
+              .sendNotification(sub, JSON.stringify({
+                title: "⚔️ ARISE — Il Sistema ti osserva",
+                body: "Missioni giornaliere in attesa: lettura, piegamenti, addominali, Duolingo. E la quest di oggi?",
+              }))
+              .then(() => console.log("Notifica inviata."))
+              .catch((e) => { console.error(e.body || e.message); process.exit(1); });
+          '
