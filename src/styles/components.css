@@ -862,6 +862,19 @@
   background: none;
 }
 .cal-day.in-month { color: var(--text); }
+.cal-day-num {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.cal-plan-mark {
+  width: 13px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--glow-soft);
+  box-shadow: 0 0 4px var(--glow-dim);
+}
 .cal-day.today { border-color: rgba(74, 168, 255, 0.5); }
 .cal-day.has-log {
   color: var(--glow);

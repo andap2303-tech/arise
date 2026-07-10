@@ -219,6 +219,7 @@ export default function History({ data, setData }) {
         </div>
         <Calendar
           logsByDate={logsByDate}
+          plans={data.plans}
           selected={selected}
           onSelect={(k) => {
             setSelected(k === selected ? null : k)

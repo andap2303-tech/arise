@@ -1,10 +1,21 @@
 import { useState } from 'react'
 import SportIcon from './SportIcon.jsx'
-import { MONTH_NAMES, toKey, todayKey } from '../logic/dates.js'
+import { MONTH_NAMES, isoWeekday, toKey, todayKey } from '../logic/dates.js'
+import { planForDate } from '../logic/plans.js'
+import { isOptionalDay } from '../logic/penalties.js'
 
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']
 
-export default function Calendar({ logsByDate, selected, onSelect }) {
+// Striscetta sotto la data per i giorni (da oggi in poi) con un allenamento
+// vero in programma — i bonus opzionali e i rest restano data e basta.
+function hasPlannedWorkout(plans, key) {
+  const plan = planForDate(plans, key)
+  const wd = isoWeekday(new Date(key + 'T12:00:00'))
+  const day = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
+  return !!day && !isOptionalDay(day)
+}
+
+export default function Calendar({ logsByDate, plans, selected, onSelect }) {
   const now = new Date()
   const [month, setMonth] = useState({ y: now.getFullYear(), m: now.getMonth() })
 
@@ -35,6 +46,7 @@ export default function Calendar({ logsByDate, selected, onSelect }) {
           if (d === null) return <span key={'e' + i} />
           const key = toKey(new Date(month.y, month.m, d))
           const log = logsByDate.get(key)
+          const planned = !log && key >= today && hasPlannedWorkout(plans || [], key)
           const cls = [
             'cal-day',
             'in-month',
@@ -44,7 +56,14 @@ export default function Calendar({ logsByDate, selected, onSelect }) {
           ].join(' ')
           return (
             <button key={key} className={cls} onClick={() => onSelect(key)}>
-              {log ? <SportIcon sport={log.sport} size={21} /> : d}
+              {log ? (
+                <SportIcon sport={log.sport} size={21} />
+              ) : (
+                <span className="cal-day-num">
+                  {d}
+                  {planned && <span className="cal-plan-mark" />}
+                </span>
+              )}
             </button>
           )
         })}
