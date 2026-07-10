@@ -20,6 +20,7 @@ export default function App() {
         tab={tab}
         onChange={(t) => {
           setTab(t)
+          document.getElementById('root')?.scrollTo(0, 0)
           window.scrollTo(0, 0)
         }}
       />
