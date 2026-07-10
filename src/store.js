@@ -78,44 +78,80 @@ function migrate(data) {
       return { ...d, sport: d.sport || (inferred !== 'other' ? inferred : 'weights') }
     }),
   }))
-  data.version = 4
+  // v5: il piano di esempio lascia il posto alla settimana reale, ma solo se
+  // è ancora lui il piano attivo (un piano incollato a mano non si tocca).
+  if ((data.version || 0) < 5 && data.plans[data.plans.length - 1]?.id === 'sample-plan') {
+    data.plans = data.plans.map((p) => (p.id === 'sample-plan' ? realWeekPlan() : p))
+  }
+  data.version = 5
   return data
 }
 
-function samplePlan() {
+// La settimana reale di Andrea (dettata in chat il 2026-07-10)
+function realWeekPlan() {
   return {
-    id: 'sample-plan',
-    name: 'Piano di esempio',
+    id: 'plan-week-v1',
+    name: 'Settimana corsa + nuoto',
     createdAt: todayKey(),
     days: [
       {
         weekday: 1,
-        title: 'Push - Petto, spalle, tricipiti',
+        title: 'Corsa - Fondo',
+        sport: 'run',
         exercises: [
-          { name: 'Panca piana', sets: 4, reps: '8-10', weight: '', notes: '' },
-          { name: 'Shoulder press manubri', sets: 3, reps: 10, weight: '', notes: '' },
-          { name: 'Croci ai cavi', sets: 3, reps: 12, weight: '', notes: '' },
-          { name: 'French press', sets: 3, reps: 12, weight: '', notes: '' },
+          { name: '5 km continui', sets: '', reps: '', weight: '', notes: 'ritmo ~5:16/km' },
         ],
       },
       {
         weekday: 3,
-        title: 'Pull - Schiena e bicipiti',
+        title: 'Nuoto - Tecnica',
+        sport: 'swim',
         exercises: [
-          { name: 'Trazioni', sets: 4, reps: 'max', weight: '', notes: '' },
-          { name: 'Rematore bilanciere', sets: 4, reps: 8, weight: '', notes: '' },
-          { name: 'Lat machine', sets: 3, reps: 10, weight: '', notes: '' },
-          { name: 'Curl bilanciere', sets: 3, reps: 12, weight: '', notes: '' },
+          { name: '8 × 100 m con pause', sets: '', reps: '', weight: '', notes: '~1 km totale' },
         ],
       },
       {
-        weekday: 5,
-        title: 'Legs - Gambe e core',
+        weekday: 4,
+        title: 'Corsa - Qualità',
+        sport: 'run',
         exercises: [
-          { name: 'Squat', sets: 4, reps: 8, weight: '', notes: '' },
-          { name: 'Leg press', sets: 3, reps: 10, weight: '', notes: '' },
-          { name: 'Affondi con manubri', sets: 3, reps: '10 per gamba', weight: '', notes: '' },
-          { name: 'Plank', sets: 3, reps: '45 sec', weight: '', notes: '' },
+          {
+            name: 'Ripetute 5 × 3 min',
+            sets: '',
+            reps: '',
+            weight: '',
+            notes: 'ritmo 5:00-5:15/km, recupero 2 min',
+          },
+        ],
+      },
+      {
+        weekday: 6,
+        title: 'Nuoto - Distanza',
+        sport: 'swim',
+        exercises: [
+          { name: 'Riscaldamento 200 m', sets: '', reps: '', weight: '', notes: '' },
+          {
+            name: '800 m continui',
+            sets: '',
+            reps: '',
+            weight: '',
+            notes: 'oppure 4 × 200 m con 15-20s pausa, ritmo blando — aerobico, niente accelerazioni',
+          },
+          { name: 'Defaticamento 150 m', sets: '', reps: '', weight: '', notes: '' },
+        ],
+      },
+      {
+        weekday: 7,
+        title: 'Tennis o padel (bonus opzionale)',
+        sport: 'tennis',
+        exercises: [
+          {
+            name: 'Attività libera',
+            sets: '',
+            reps: '',
+            weight: '',
+            notes: 'opzionale: tennis, padel o quello che va — se salti non è un problema',
+          },
         ],
       },
     ],
@@ -125,7 +161,7 @@ function samplePlan() {
 function defaultData() {
   return migrate({
     profile: { xp: 0, level: 1 },
-    plans: [samplePlan()],
+    plans: [realWeekPlan()],
     logs: [],
   })
 }
