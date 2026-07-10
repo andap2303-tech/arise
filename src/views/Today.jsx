@@ -211,7 +211,7 @@ export default function Today({ data, setData }) {
         <SystemWindow title={freeMode ? 'Registra allenamento' : 'Riposo'}>
           {!freeMode ? (
             <>
-              <p className="quest-title">Giorno di riposo</p>
+              <p className="quest-title">Nessuna quest oggi</p>
               {postponedTo ? (
                 <>
                   <p className="quest-warning">
@@ -224,9 +224,7 @@ export default function Today({ data, setData }) {
                   </button>
                 </>
               ) : (
-                <p className="quest-warning">
-                  Il piano non prevede allenamenti oggi. Recupera le forze, Hunter.
-                </p>
+                <p className="quest-warning">Recupera le forze, Hunter.</p>
               )}
               <div className="section-gap" />
               <button className="btn secondary" onClick={() => setFreeMode(true)}>
