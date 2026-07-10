@@ -16,14 +16,7 @@ export default function App() {
       {tab === 'history' && <History data={data} setData={setData} />}
       {tab === 'plans' && <Plans data={data} setData={setData} />}
       {tab === 'profile' && <Profile data={data} setData={setData} />}
-      <TabBar
-        tab={tab}
-        onChange={(t) => {
-          setTab(t)
-          document.getElementById('root')?.scrollTo(0, 0)
-          window.scrollTo(0, 0)
-        }}
-      />
+      <TabBar tab={tab} onChange={setTab} />
     </>
   )
 }
