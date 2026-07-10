@@ -1,14 +1,13 @@
 import SystemWindow from './SystemWindow.jsx'
 import SportBadge from './SportBadge.jsx'
-import { formatKey, fromKey, isoWeekday, todayKey } from '../logic/dates.js'
+import { formatKey, todayKey } from '../logic/dates.js'
 import {
-  PENALTY_SINCE,
   XP_PENALTY_MISSION,
   XP_PENALTY_WORKOUT,
-  isOptionalDay,
+  isMissedDay,
   questsForDay,
 } from '../logic/penalties.js'
-import { planForDate } from '../logic/plans.js'
+import { plannedDayForDate } from '../logic/plans.js'
 
 export function exerciseDetail(e) {
   const parts = []
@@ -49,12 +48,11 @@ function DayMissions({ dayKey, quests, ticks, isPast }) {
   )
 }
 
-export default function DayDetail({ dayKey, logs, plans, quests, ticks }) {
+export default function DayDetail({ dayKey, data }) {
   const today = todayKey()
+  const { logs, dailyQuests: quests, dailyTicks: ticks } = data
   const dayLogs = logs.filter((l) => l.date === dayKey)
-  const wd = isoWeekday(fromKey(dayKey))
-  const plan = planForDate(plans, dayKey)
-  const planDay = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
+  const planDay = plannedDayForDate(data, dayKey)
   const isPast = dayKey < today
 
   return (
@@ -78,7 +76,7 @@ export default function DayDetail({ dayKey, logs, plans, quests, ticks }) {
           </div>
         ))
       ) : isPast ? (
-        planDay && !isOptionalDay(planDay) && dayKey >= PENALTY_SINCE ? (
+        isMissedDay(data, dayKey) ? (
           <>
             <p className="quest-title">{planDay.title}</p>
             <p className="empty-note" style={{ color: 'var(--danger)' }}>

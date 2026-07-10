@@ -1,6 +1,6 @@
-import { addDays, fromKey, isoWeekday, toKey, todayKey } from './dates.js'
+import { addDays, fromKey, toKey, todayKey } from './dates.js'
 import { removeXp } from './xp.js'
-import { planForDate } from './plans.js'
+import { plannedDayForDate } from './plans.js'
 
 // Le penalità esistono da quando esistono le missioni: prima di questa data
 // nessun giorno viene giudicato.
@@ -19,12 +19,18 @@ export function questsForDay(quests, dayKey) {
 }
 
 export function missedWorkoutPenalty(data, dayKey) {
-  const plan = planForDate(data.plans, dayKey)
-  const wd = isoWeekday(fromKey(dayKey))
-  const planDay = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
+  const planDay = plannedDayForDate(data, dayKey)
   if (!planDay || isOptionalDay(planDay)) return 0
   const trained = data.logs.some((l) => l.date === dayKey)
   return trained ? 0 : XP_PENALTY_WORKOUT
+}
+
+// Giorno passato con allenamento previsto (posticipi inclusi) e nessun log.
+export function isMissedDay(data, dayKey) {
+  if (dayKey >= todayKey() || dayKey < PENALTY_SINCE) return false
+  const planDay = plannedDayForDate(data, dayKey)
+  if (!planDay || isOptionalDay(planDay)) return false
+  return !data.logs.some((l) => l.date === dayKey)
 }
 
 // Giudica tutti i giorni passati non ancora giudicati (fino a ieri compreso)

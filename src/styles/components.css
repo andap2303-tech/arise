@@ -875,6 +875,17 @@
   background: var(--glow-soft);
   box-shadow: 0 0 4px var(--glow-dim);
 }
+.cal-day.missed {
+  color: var(--danger);
+  font-size: 17px;
+  text-shadow: 0 0 6px rgba(248, 113, 113, 0.4);
+}
+.week-day .missed-x {
+  color: var(--danger);
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(248, 113, 113, 0.4);
+}
 .cal-day.today { border-color: rgba(74, 168, 255, 0.5); }
 .cal-day.has-log {
   color: var(--glow);

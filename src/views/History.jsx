@@ -219,7 +219,7 @@ export default function History({ data, setData }) {
         </div>
         <Calendar
           logsByDate={logsByDate}
-          plans={data.plans}
+          data={data}
           selected={selected}
           onSelect={(k) => {
             setSelected(k === selected ? null : k)
@@ -254,13 +254,7 @@ export default function History({ data, setData }) {
             )}
           </SystemWindow>
         ) : (
-          <DayDetail
-            dayKey={selected}
-            logs={data.logs}
-            plans={data.plans}
-            quests={data.dailyQuests}
-            ticks={data.dailyTicks}
-          />
+          <DayDetail dayKey={selected} data={data} />
         ))}
 
       <SystemWindow title="Ricerca">

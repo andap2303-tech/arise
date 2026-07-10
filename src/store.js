@@ -63,6 +63,7 @@ function migrate(data) {
     data.dailyQuests.unshift({ id: 'dq-reading', label: 'Leggere 15 minuti' })
   }
   if (!data.dailyTicks || typeof data.dailyTicks !== 'object') data.dailyTicks = {}
+  if (!data.moves || typeof data.moves !== 'object') data.moves = {}
   if (!data.workoutTypes || typeof data.workoutTypes !== 'object') data.workoutTypes = defaultWorkoutTypes()
   if (!data.stravaSeeded) {
     seedStravaLogs(data)

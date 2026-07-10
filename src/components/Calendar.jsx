@@ -1,21 +1,19 @@
 import { useState } from 'react'
 import SportIcon from './SportIcon.jsx'
-import { MONTH_NAMES, isoWeekday, toKey, todayKey } from '../logic/dates.js'
-import { planForDate } from '../logic/plans.js'
-import { isOptionalDay } from '../logic/penalties.js'
+import { MONTH_NAMES, toKey, todayKey } from '../logic/dates.js'
+import { plannedDayForDate } from '../logic/plans.js'
+import { isMissedDay, isOptionalDay } from '../logic/penalties.js'
 
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']
 
 // Striscetta sotto la data per i giorni (da oggi in poi) con un allenamento
 // vero in programma — i bonus opzionali e i rest restano data e basta.
-function hasPlannedWorkout(plans, key) {
-  const plan = planForDate(plans, key)
-  const wd = isoWeekday(new Date(key + 'T12:00:00'))
-  const day = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
+function hasPlannedWorkout(data, key) {
+  const day = plannedDayForDate(data, key)
   return !!day && !isOptionalDay(day)
 }
 
-export default function Calendar({ logsByDate, plans, selected, onSelect }) {
+export default function Calendar({ logsByDate, data, selected, onSelect }) {
   const now = new Date()
   const [month, setMonth] = useState({ y: now.getFullYear(), m: now.getMonth() })
 
@@ -46,18 +44,22 @@ export default function Calendar({ logsByDate, plans, selected, onSelect }) {
           if (d === null) return <span key={'e' + i} />
           const key = toKey(new Date(month.y, month.m, d))
           const log = logsByDate.get(key)
-          const planned = !log && key >= today && hasPlannedWorkout(plans || [], key)
+          const planned = !log && key >= today && hasPlannedWorkout(data, key)
+          const missed = !log && isMissedDay(data, key)
           const cls = [
             'cal-day',
             'in-month',
             key === today ? 'today' : '',
             log ? 'has-log' : '',
+            missed ? 'missed' : '',
             key === selected ? 'selected' : '',
           ].join(' ')
           return (
             <button key={key} className={cls} onClick={() => onSelect(key)}>
               {log ? (
                 <SportIcon sport={log.sport} size={21} />
+              ) : missed ? (
+                '✕'
               ) : (
                 <span className="cal-day-num">
                   {d}

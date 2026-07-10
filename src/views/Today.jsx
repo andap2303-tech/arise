@@ -9,8 +9,9 @@ import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
 import DayDetail, { exerciseDetail } from '../components/DayDetail.jsx'
 import { activePlan } from '../store.js'
+import { plannedDayForDate } from '../logic/plans.js'
 import { newId } from '../logic/ids.js'
-import { formatKey, isoWeekday, todayKey } from '../logic/dates.js'
+import { addDays, formatKey, todayKey, toKey } from '../logic/dates.js'
 import { XP_PER_WORKOUT, applyXp, streakBonus } from '../logic/xp.js'
 import { computeStreak, computeWeekStreak } from '../logic/streak.js'
 import { SPORTS } from '../logic/sports.js'
@@ -29,9 +30,9 @@ function StreakChip({ weeks }) {
 
 export default function Today({ data, setData }) {
   const today = todayKey()
-  const weekday = isoWeekday(new Date())
   const plan = activePlan(data)
-  const planDay = plan?.days.find((d) => d.weekday === weekday && d.exercises.length > 0)
+  const planDay = plannedDayForDate(data, today)
+  const postponedTo = data.moves?.[today]
   const todayLog = data.logs.find((l) => l.date === today)
   const weekStreak = computeWeekStreak(data.logs, data.profile.weekStreak)
 
@@ -83,6 +84,22 @@ export default function Today({ data, setData }) {
     })
   }
 
+  function postpone() {
+    const tomorrow = toKey(addDays(new Date(), 1))
+    const tomorrowOwn = plannedDayForDate(data, tomorrow)
+    const msg = tomorrowOwn
+      ? `Domani c'è già «${tomorrowOwn.title}»: verrebbe coperto da «${planDay.title}». Posticipare lo stesso?`
+      : `Spostare «${planDay.title}» a domani? Oggi diventa riposo, senza penalità.`
+    if (!window.confirm(msg)) return
+    setData({ ...data, moves: { ...data.moves, [today]: tomorrow } })
+  }
+
+  function undoPostpone() {
+    const moves = { ...data.moves }
+    delete moves[today]
+    setData({ ...data, moves })
+  }
+
   function completeQuest() {
     const exercises = planDay.exercises.map((e, i) => ({ ...e, done: checked.has(i) }))
     completeWorkout(planDay.title, exercises, planDay.sport || 'weights')
@@ -124,6 +141,7 @@ export default function Today({ data, setData }) {
       </div>
       <p className="quest-goal-label">{formatKey(today)}</p>
       <WeekStrip
+        data={data}
         logs={data.logs}
         selected={selectedDay}
         onSelect={(k) => setSelectedDay(k === selectedDay ? null : k)}
@@ -137,13 +155,7 @@ export default function Today({ data, setData }) {
     return (
       <div className="view">
         {header}
-        <DayDetail
-          dayKey={selectedDay}
-          logs={data.logs}
-          plans={data.plans}
-          quests={data.dailyQuests}
-          ticks={data.dailyTicks}
-        />
+        <DayDetail dayKey={selectedDay} data={data} />
       </div>
     )
   }
@@ -190,15 +202,32 @@ export default function Today({ data, setData }) {
           <button className="btn" onClick={completeQuest} disabled={checked.size === 0}>
             Completa quest
           </button>
+          <div className="section-gap" />
+          <button className="btn secondary small" onClick={postpone}>
+            ⏭ Posticipa a domani
+          </button>
         </SystemWindow>
       ) : (
         <SystemWindow title={freeMode ? 'Registra allenamento' : 'Sistema'}>
           {!freeMode ? (
             <>
               <p className="quest-title">Giorno di riposo</p>
-              <p className="quest-warning">
-                Il piano non prevede allenamenti oggi. Recupera le forze, Hunter.
-              </p>
+              {postponedTo ? (
+                <>
+                  <p className="quest-warning">
+                    Allenamento posticipato a domani ({formatKey(postponedTo).toLowerCase()}).
+                    Oggi niente penalità.
+                  </p>
+                  <div className="section-gap" />
+                  <button className="btn secondary small" onClick={undoPostpone}>
+                    ↩ Annulla posticipo
+                  </button>
+                </>
+              ) : (
+                <p className="quest-warning">
+                  Il piano non prevede allenamenti oggi. Recupera le forze, Hunter.
+                </p>
+              )}
               <div className="section-gap" />
               <button className="btn secondary" onClick={() => setFreeMode(true)}>
                 Registra un allenamento

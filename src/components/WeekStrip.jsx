@@ -1,9 +1,10 @@
 import SportIcon from './SportIcon.jsx'
 import { addDays, MONTH_NAMES, toKey, todayKey, weekStart } from '../logic/dates.js'
+import { isMissedDay } from '../logic/penalties.js'
 
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']
 
-export default function WeekStrip({ logs, selected, onSelect }) {
+export default function WeekStrip({ data, logs, selected, onSelect }) {
   const start = weekStart(new Date())
   const end = addDays(start, 6)
   const today = todayKey()
@@ -40,7 +41,13 @@ export default function WeekStrip({ logs, selected, onSelect }) {
             >
               <span className="week-day-letter">{letter}</span>
               <span className="week-day-slot">
-                {log ? <SportIcon sport={log.sport} size={19} /> : <span className="week-day-dot" />}
+                {log ? (
+                  <SportIcon sport={log.sport} size={19} />
+                ) : isMissedDay(data, key) ? (
+                  <span className="missed-x">✕</span>
+                ) : (
+                  <span className="week-day-dot" />
+                )}
               </span>
               <span className="week-day-num">{date.getDate()}</span>
             </div>
