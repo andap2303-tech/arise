@@ -88,6 +88,23 @@ textarea {
   outline: none;
 }
 
+/* iOS disegna il campo data a modo suo e il testo sborda dal riquadro:
+   appearance:none + altezza esplicita lo riportano dentro. */
+input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 46px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+input[type='date']::-webkit-date-and-time-value {
+  text-align: left;
+  margin: 0;
+}
+
 input:focus,
 textarea:focus {
   border-color: var(--glow);
