@@ -5,7 +5,7 @@ import SportIcon from '../components/SportIcon.jsx'
 import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
 import DayDetail from '../components/DayDetail.jsx'
-import { formatKey, toKey, weekStart } from '../logic/dates.js'
+import { MONTH_NAMES, formatKey } from '../logic/dates.js'
 import { removeXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
 
@@ -156,6 +156,8 @@ export default function History({ data, setData }) {
   const [selected, setSelected] = useState(null)
   const [query, setQuery] = useState('')
   const [editingId, setEditingId] = useState(null)
+  const now = new Date()
+  const [month, setMonth] = useState({ y: now.getFullYear(), m: now.getMonth() })
 
   const logsByDate = useMemo(() => {
     const m = new Map()
@@ -163,14 +165,11 @@ export default function History({ data, setData }) {
     return m
   }, [data.logs])
 
-  const now = new Date()
-  const monthPrefix = toKey(now).slice(0, 7)
-  const wkStart = toKey(weekStart(now))
-  const counts = {
-    total: data.logs.length,
-    month: data.logs.filter((l) => l.date.startsWith(monthPrefix)).length,
-    week: data.logs.filter((l) => l.date >= wkStart && l.date <= toKey(now)).length,
-  }
+  // riassunto del mese visualizzato nel calendario, ripartito per sport
+  const monthPrefix = `${month.y}-${String(month.m + 1).padStart(2, '0')}`
+  const monthLogs = data.logs.filter((l) => l.date.startsWith(monthPrefix))
+  const bySport = [...monthLogs.reduce((m, l) => m.set(l.sport, (m.get(l.sport) || 0) + 1), new Map())]
+    .sort((a, b) => b[1] - a[1])
 
   const selectedLogs = selected ? data.logs.filter((l) => l.date === selected) : []
 
@@ -203,23 +202,27 @@ export default function History({ data, setData }) {
   return (
     <div className="view">
       <SystemWindow title="Calendario">
-        <div className="stat-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', marginBottom: 14 }}>
-          <div className="stat-box">
-            <div className="stat-value">{counts.total}</div>
-            <div className="stat-label">Totali</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-value">{counts.month}</div>
-            <div className="stat-label">Mese</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-value">{counts.week}</div>
-            <div className="stat-label">Settimana</div>
-          </div>
+        <div className="month-summary">
+          <span className="month-summary-count">
+            {monthLogs.length === 0
+              ? `Nessun allenamento a ${MONTH_NAMES[month.m].toLowerCase()}`
+              : `${monthLogs.length} allenament${monthLogs.length === 1 ? 'o' : 'i'} a ${MONTH_NAMES[month.m].toLowerCase()}`}
+          </span>
+          {bySport.length > 0 && (
+            <span className="month-sport-chips">
+              {bySport.map(([sport, n]) => (
+                <span key={sport} className="month-sport-chip">
+                  <SportIcon sport={sport} size={15} /> {n}
+                </span>
+              ))}
+            </span>
+          )}
         </div>
         <Calendar
           logsByDate={logsByDate}
           data={data}
+          month={month}
+          onMonthChange={setMonth}
           selected={selected}
           onSelect={(k) => {
             setSelected(k === selected ? null : k)

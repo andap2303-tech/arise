@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import SportIcon from './SportIcon.jsx'
 import { MONTH_NAMES, toKey, todayKey } from '../logic/dates.js'
 import { plannedDayForDate } from '../logic/plans.js'
@@ -13,10 +12,7 @@ function hasPlannedWorkout(data, key) {
   return !!day && !isOptionalDay(day)
 }
 
-export default function Calendar({ logsByDate, data, selected, onSelect }) {
-  const now = new Date()
-  const [month, setMonth] = useState({ y: now.getFullYear(), m: now.getMonth() })
-
+export default function Calendar({ logsByDate, data, month, onMonthChange, selected, onSelect }) {
   const first = new Date(month.y, month.m, 1)
   const firstDow = first.getDay() === 0 ? 7 : first.getDay() // 1=lun
   const daysInMonth = new Date(month.y, month.m + 1, 0).getDate()
@@ -26,8 +22,10 @@ export default function Calendar({ logsByDate, data, selected, onSelect }) {
   for (let i = 1; i < firstDow; i++) cells.push(null)
   for (let d = 1; d <= daysInMonth; d++) cells.push(d)
 
-  const prev = () => setMonth(({ y, m }) => (m === 0 ? { y: y - 1, m: 11 } : { y, m: m - 1 }))
-  const next = () => setMonth(({ y, m }) => (m === 11 ? { y: y + 1, m: 0 } : { y, m: m + 1 }))
+  const prev = () =>
+    onMonthChange(month.m === 0 ? { y: month.y - 1, m: 11 } : { y: month.y, m: month.m - 1 })
+  const next = () =>
+    onMonthChange(month.m === 11 ? { y: month.y + 1, m: 0 } : { y: month.y, m: month.m + 1 })
 
   return (
     <div>

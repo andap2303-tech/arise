@@ -3,7 +3,8 @@ import SystemWindow from '../components/SystemWindow.jsx'
 import { activePlan } from '../store.js'
 import { rankForLevel, xpForNextLevel } from '../logic/xp.js'
 import { computeWeekStreak } from '../logic/streak.js'
-import { todayKey, toKey, weekStart } from '../logic/dates.js'
+import { addDays, fromKey, todayKey, toKey } from '../logic/dates.js'
+import { PENALTY_SINCE, isMissedDay } from '../logic/penalties.js'
 
 export default function Profile({ data, setData }) {
   const fileRef = useRef(null)
@@ -12,11 +13,17 @@ export default function Profile({ data, setData }) {
   const needed = xpForNextLevel(level)
   const weekStreak = computeWeekStreak(data.logs, data.profile.weekStreak)
 
-  const now = new Date()
-  const monthPrefix = todayKey().slice(0, 7)
-  const wkStart = toKey(weekStart(now))
-  const monthCount = data.logs.filter((l) => l.date.startsWith(monthPrefix)).length
-  const weekCount = data.logs.filter((l) => l.date >= wkStart && l.date <= todayKey()).length
+  const missionsDone = Object.values(data.dailyTicks).reduce((n, ids) => n + ids.length, 0)
+  let questsFailed = 0
+  const yesterday = toKey(addDays(new Date(), -1))
+  for (let k = PENALTY_SINCE; k <= yesterday; k = toKey(addDays(fromKey(k), 1))) {
+    if (isMissedDay(data, k)) questsFailed += 1
+  }
+  const kmBySport = (sport) =>
+    data.logs.filter((l) => l.sport === sport).reduce((n, l) => n + (l.distanceKm || 0), 0)
+  const fmtKm = (km) => (km >= 100 ? Math.round(km) : Math.round(km * 10) / 10)
+  const runKm = fmtKm(kmBySport('run'))
+  const swimKm = fmtKm(kmBySport('swim'))
 
   function exportBackup() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -84,12 +91,25 @@ export default function Profile({ data, setData }) {
             <div className="stat-label">Workout totali</div>
           </div>
           <div className="stat-box">
-            <div className="stat-value">{weekCount}</div>
-            <div className="stat-label">Questa settimana</div>
+            <div className="stat-value" style={{ color: 'var(--success)' }}>{missionsDone}</div>
+            <div className="stat-label">Missioni completate</div>
           </div>
           <div className="stat-box">
-            <div className="stat-value">{monthCount}</div>
-            <div className="stat-label">Questo mese</div>
+            <div
+              className="stat-value"
+              style={questsFailed > 0 ? { color: 'var(--danger)' } : undefined}
+            >
+              {questsFailed}
+            </div>
+            <div className="stat-label">Quest fallite</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{runKm} km</div>
+            <div className="stat-label">Corsa</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{swimKm} km</div>
+            <div className="stat-label">Nuoto</div>
           </div>
         </div>
       </SystemWindow>
