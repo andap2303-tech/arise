@@ -27,6 +27,7 @@ function defaultWorkoutTypes() {
 
 function defaultDailyQuests() {
   return [
+    { id: 'dq-reading', label: 'Leggere 15 minuti' },
     { id: 'dq-pushups', label: '20 piegamenti' },
     { id: 'dq-situps', label: '20 addominali' },
   ]
@@ -53,6 +54,11 @@ function migrate(data) {
   if (!data.profile.weekStreak) data.profile.weekStreak = { ...WEEK_STREAK_SEED }
   if (!Array.isArray(data.goals) || data.goals.length === 0) data.goals = defaultGoals()
   if (!Array.isArray(data.dailyQuests)) data.dailyQuests = defaultDailyQuests()
+  // v4: la lettura entra nelle missioni di default; una volta sola, così se
+  // Andrea la elimina dall'editor non viene re-inserita a ogni avvio.
+  if ((data.version || 0) < 4 && !data.dailyQuests.some((q) => q.id === 'dq-reading')) {
+    data.dailyQuests.unshift({ id: 'dq-reading', label: 'Leggere 15 minuti' })
+  }
   if (!data.dailyTicks || typeof data.dailyTicks !== 'object') data.dailyTicks = {}
   if (!data.workoutTypes || typeof data.workoutTypes !== 'object') data.workoutTypes = defaultWorkoutTypes()
   if (!data.stravaSeeded) {
@@ -72,7 +78,7 @@ function migrate(data) {
       return { ...d, sport: d.sport || (inferred !== 'other' ? inferred : 'weights') }
     }),
   }))
-  data.version = 3
+  data.version = 4
   return data
 }
 

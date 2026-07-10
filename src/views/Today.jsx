@@ -35,7 +35,38 @@ function StreakChip({ weeks }) {
   )
 }
 
-function DayDetail({ dayKey, logs, plan }) {
+// Le missioni giornaliere esistono da quando esiste l'app: prima di questa
+// data non ha senso mostrarle (né fatte né saltate).
+const MISSIONS_SINCE = '2026-07-09'
+
+function DayMissions({ dayKey, quests, ticks, isPast }) {
+  if (dayKey < MISSIONS_SINCE || quests.length === 0) return null
+  const ticked = new Set(ticks[dayKey] || [])
+  return (
+    <>
+      <p className="quest-goal-label" style={{ marginTop: 14 }}>MISSIONI GIORNALIERE</p>
+      {quests.map((q) => {
+        const done = ticked.has(q.id)
+        const missed = isPast && !done
+        return (
+          <div key={q.id} className={'exercise-row mission-row' + (done ? ' done' : '')}>
+            <span className={'check' + (done ? ' success' : missed ? ' missed' : '')}>
+              {missed ? '✕' : '✓'}
+            </span>
+            <div className="exercise-info">
+              <div className="exercise-name" style={missed ? { color: 'var(--danger)' } : undefined}>
+                {q.label}
+              </div>
+            </div>
+            <span className="mission-xp">{done ? '+10 XP' : missed ? 'saltata' : ''}</span>
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
+function DayDetail({ dayKey, logs, plan, quests, ticks }) {
   const today = todayKey()
   const dayLogs = logs.filter((l) => l.date === dayKey)
   const wd = isoWeekday(fromKey(dayKey))
@@ -81,6 +112,7 @@ function DayDetail({ dayKey, logs, plan }) {
       ) : (
         <p className="empty-note">Nessun allenamento in programma — riposo.</p>
       )}
+      <DayMissions dayKey={dayKey} quests={quests} ticks={ticks} isPast={isPast} />
     </SystemWindow>
   )
 }
@@ -188,7 +220,13 @@ export default function Today({ data, setData }) {
       />
 
       {selectedDay && selectedDay !== today && (
-        <DayDetail dayKey={selectedDay} logs={data.logs} plan={plan} />
+        <DayDetail
+          dayKey={selectedDay}
+          logs={data.logs}
+          plan={plan}
+          quests={data.dailyQuests}
+          ticks={data.dailyTicks}
+        />
       )}
 
       <GoalRings data={data} setData={setData} />
