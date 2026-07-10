@@ -9,13 +9,15 @@ export function xpForNextLevel(level) {
   return level * 200
 }
 
+// A ~600 XP/settimana (5 workout): D ≈ 7 settimane, C ≈ 5 mesi,
+// B ≈ 1 anno, A ≈ 2 anni, S ≈ 3+ anni di costanza.
 export const RANKS = [
   { rank: 'E', minLevel: 1, color: '#9ca3af' },
-  { rank: 'D', minLevel: 5, color: '#34d399' },
-  { rank: 'C', minLevel: 10, color: '#4aa8ff' },
-  { rank: 'B', minLevel: 15, color: '#00d4ff' },
-  { rank: 'A', minLevel: 20, color: '#fbbf24' },
-  { rank: 'S', minLevel: 30, color: '#a855f7' },
+  { rank: 'D', minLevel: 7, color: '#34d399' },
+  { rank: 'C', minLevel: 12, color: '#4aa8ff' },
+  { rank: 'B', minLevel: 18, color: '#00d4ff' },
+  { rank: 'A', minLevel: 25, color: '#fbbf24' },
+  { rank: 'S', minLevel: 33, color: '#a855f7' },
 ]
 
 export function rankForLevel(level) {

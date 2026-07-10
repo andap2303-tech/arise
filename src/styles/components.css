@@ -730,9 +730,11 @@
 }
 .stat-box .stat-label {
   font-size: 11px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-dim);
+  white-space: nowrap;
+  margin-top: 2px;
 }
 
 .level-row {

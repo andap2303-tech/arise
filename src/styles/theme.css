@@ -47,7 +47,7 @@ body {
   max-width: 560px;
   margin: 0 auto;
   min-height: 100%;
-  padding: 16px 14px calc(var(--tabbar-h) + 20px);
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 14px calc(var(--tabbar-h) + 20px);
 }
 
 h1, h2, h3 {
