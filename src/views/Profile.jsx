@@ -24,6 +24,8 @@ export default function Profile({ data, setData }) {
   const fmtKm = (km) => (km >= 100 ? Math.round(km) : Math.round(km * 10) / 10)
   const runKm = fmtKm(kmBySport('run'))
   const swimKm = fmtKm(kmBySport('swim'))
+  const bikeKm = fmtKm(kmBySport('bike'))
+  const countBySport = (sport) => data.logs.filter((l) => l.sport === sport).length
 
   function exportBackup() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -110,6 +112,22 @@ export default function Profile({ data, setData }) {
           <div className="stat-box">
             <div className="stat-value">{swimKm} km</div>
             <div className="stat-label">Nuoto</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{bikeKm} km</div>
+            <div className="stat-label">Ciclismo</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{countBySport('weights')}</div>
+            <div className="stat-label">Palestra</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{countBySport('tennis')}</div>
+            <div className="stat-label">Tennis</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">{countBySport('padel')}</div>
+            <div className="stat-label">Padel</div>
           </div>
         </div>
       </SystemWindow>
