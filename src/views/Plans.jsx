@@ -164,16 +164,16 @@ function SmartLoad({ data, setData }) {
     setStartInput(toKey(weekStart(addDays(new Date(), 7))))
   }
 
-  function analyze() {
+  function analyze(text = pasted) {
     setMessage(null)
-    const { plan, error: planErr } = parsePlan(pasted)
+    const { plan, error: planErr } = parsePlan(text)
     if (plan) {
       setPlanPreview(plan)
       setStravaPreview(null)
       setError(null)
       return
     }
-    const { activities } = parseStravaActivities(pasted)
+    const { activities } = parseStravaActivities(text)
     if (activities) {
       setStravaPreview(activities)
       setPlanPreview(null)
@@ -181,6 +181,22 @@ function SmartLoad({ data, setData }) {
       return
     }
     setError(planErr)
+  }
+
+  // Legge la clipboard e analizza subito: un tap invece di tenere premuto
+  // nella textarea. iOS chiede conferma con il popup "Incolla".
+  async function pasteFromClipboard() {
+    try {
+      const text = await navigator.clipboard.readText()
+      if (!text?.trim()) {
+        setError('Gli appunti sono vuoti: copia prima la scheda.')
+        return
+      }
+      setPasted(text)
+      analyze(text)
+    } catch {
+      setError('Non riesco a leggere gli appunti: incolla a mano nella casella qui sotto.')
+    }
   }
 
   function confirm() {
@@ -222,6 +238,11 @@ function SmartLoad({ data, setData }) {
         </>
       ) : (
         <div className="import-area">
+          <button className="btn" onClick={pasteFromClipboard}>
+            📋 Incolla dagli appunti
+          </button>
+          <div className="section-gap" />
+          <p className="hint">…oppure incolla a mano:</p>
           <textarea
             placeholder="Incolla qui…"
             value={pasted}
