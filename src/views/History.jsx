@@ -4,6 +4,8 @@ import Calendar from '../components/Calendar.jsx'
 import SportIcon from '../components/SportIcon.jsx'
 import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
+import DayDetail from '../components/DayDetail.jsx'
+import { activePlan } from '../store.js'
 import { formatKey, toKey, weekStart } from '../logic/dates.js'
 import { removeXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
@@ -226,10 +228,10 @@ export default function History({ data, setData }) {
         />
       </SystemWindow>
 
-      {selected && (
-        <SystemWindow title={formatKey(selected)}>
-          {selectedLogs.length > 0 ? (
-            selectedLogs.map((l) =>
+      {selected &&
+        (selectedLogs.length > 0 ? (
+          <SystemWindow title={formatKey(selected)}>
+            {selectedLogs.map((l) =>
               editingId === l.id ? (
                 <LogEditor
                   key={l.id}
@@ -249,12 +251,17 @@ export default function History({ data, setData }) {
                   onDelete={() => deleteLog(l)}
                 />
               ),
-            )
-          ) : (
-            <p className="empty-note">Nessun allenamento registrato.</p>
-          )}
-        </SystemWindow>
-      )}
+            )}
+          </SystemWindow>
+        ) : (
+          <DayDetail
+            dayKey={selected}
+            logs={data.logs}
+            plan={activePlan(data)}
+            quests={data.dailyQuests}
+            ticks={data.dailyTicks}
+          />
+        ))}
 
       <SystemWindow title="Ricerca">
         <input
