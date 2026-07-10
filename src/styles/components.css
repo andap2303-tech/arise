@@ -79,6 +79,9 @@
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.3em;
+  /* il letter-spacing aggiunge spazio anche dopo l'ultima lettera:
+     senza compenso il titolo pende a sinistra tra i due rombi */
+  margin-right: -0.3em;
   text-transform: uppercase;
   color: var(--glow);
   text-shadow: 0 0 10px var(--glow-dim);
