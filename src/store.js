@@ -6,6 +6,7 @@ import { newId } from './logic/ids.js'
 import { applyXp } from './logic/xp.js'
 import { mergeStravaActivities } from './logic/strava.js'
 import { settlePenalties } from './logic/penalties.js'
+import { planForDate } from './logic/plans.js'
 import stravaSeed from './data/strava-seed.json'
 
 const KEY = 'arise-data'
@@ -209,7 +210,7 @@ export function useAppData() {
   return [data, setData]
 }
 
-// Piano attivo = l'ultimo aggiunto
+// Piano attivo = quello valido oggi
 export function activePlan(data) {
-  return data.plans.length > 0 ? data.plans[data.plans.length - 1] : null
+  return planForDate(data.plans, todayKey())
 }

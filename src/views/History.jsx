@@ -5,7 +5,6 @@ import SportIcon from '../components/SportIcon.jsx'
 import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
 import DayDetail from '../components/DayDetail.jsx'
-import { activePlan } from '../store.js'
 import { formatKey, toKey, weekStart } from '../logic/dates.js'
 import { removeXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
@@ -257,7 +256,7 @@ export default function History({ data, setData }) {
           <DayDetail
             dayKey={selected}
             logs={data.logs}
-            plan={activePlan(data)}
+            plans={data.plans}
             quests={data.dailyQuests}
             ticks={data.dailyTicks}
           />

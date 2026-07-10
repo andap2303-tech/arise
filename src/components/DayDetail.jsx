@@ -8,6 +8,7 @@ import {
   isOptionalDay,
   questsForDay,
 } from '../logic/penalties.js'
+import { planForDate } from '../logic/plans.js'
 
 export function exerciseDetail(e) {
   const parts = []
@@ -48,10 +49,11 @@ function DayMissions({ dayKey, quests, ticks, isPast }) {
   )
 }
 
-export default function DayDetail({ dayKey, logs, plan, quests, ticks }) {
+export default function DayDetail({ dayKey, logs, plans, quests, ticks }) {
   const today = todayKey()
   const dayLogs = logs.filter((l) => l.date === dayKey)
   const wd = isoWeekday(fromKey(dayKey))
+  const plan = planForDate(plans, dayKey)
   const planDay = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
   const isPast = dayKey < today
 

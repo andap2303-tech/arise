@@ -1,5 +1,6 @@
 import { addDays, fromKey, isoWeekday, toKey, todayKey } from './dates.js'
 import { removeXp } from './xp.js'
+import { planForDate } from './plans.js'
 
 // Le penalità esistono da quando esistono le missioni: prima di questa data
 // nessun giorno viene giudicato.
@@ -18,8 +19,7 @@ export function questsForDay(quests, dayKey) {
 }
 
 export function missedWorkoutPenalty(data, dayKey) {
-  // piano attivo = l'ultimo (duplicato da store.js per evitare import circolare)
-  const plan = data.plans[data.plans.length - 1]
+  const plan = planForDate(data.plans, dayKey)
   const wd = isoWeekday(fromKey(dayKey))
   const planDay = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
   if (!planDay || isOptionalDay(planDay)) return 0

@@ -3,7 +3,7 @@ import SystemWindow from '../components/SystemWindow.jsx'
 import SportIcon from '../components/SportIcon.jsx'
 import { activePlan } from '../store.js'
 import { newId } from '../logic/ids.js'
-import { WEEKDAY_NAMES, todayKey } from '../logic/dates.js'
+import { WEEKDAY_NAMES, addDays, formatKey, todayKey, toKey, weekStart } from '../logic/dates.js'
 import { parsePlan } from '../logic/parser.js'
 import { mergeStravaActivities, parseStravaActivities } from '../logic/strava.js'
 import { applyXp } from '../logic/xp.js'
@@ -153,12 +153,15 @@ function SmartLoad({ data, setData }) {
   const [planPreview, setPlanPreview] = useState(null)
   const [stravaPreview, setStravaPreview] = useState(null)
   const [message, setMessage] = useState(null)
+  // default: la scheda nuova vale dal prossimo lunedì
+  const [startInput, setStartInput] = useState(() => toKey(weekStart(addDays(new Date(), 7))))
 
   function reset() {
     setPasted('')
     setError(null)
     setPlanPreview(null)
     setStravaPreview(null)
+    setStartInput(toKey(weekStart(addDays(new Date(), 7))))
   }
 
   function analyze() {
@@ -182,9 +185,15 @@ function SmartLoad({ data, setData }) {
 
   function confirm() {
     if (planPreview) {
-      const newPlan = { ...planPreview, id: newId(), createdAt: todayKey() }
+      // qualunque giorno scelga, il piano parte dal lunedì di quella settimana
+      const startDate = toKey(weekStart(new Date(startInput + 'T12:00:00')))
+      const newPlan = { ...planPreview, id: newId(), createdAt: todayKey(), startDate }
       setData({ ...data, plans: [...data.plans, newPlan] })
-      setMessage(`✓ Scheda «${planPreview.name}» caricata e attiva.`)
+      setMessage(
+        startDate > todayKey()
+          ? `✓ Scheda «${planPreview.name}» caricata: parte ${formatKey(startDate).toLowerCase()}.`
+          : `✓ Scheda «${planPreview.name}» caricata e attiva.`,
+      )
     } else if (stravaPreview) {
       const { logs, added, skipped, xpGained } = mergeStravaActivities(data.logs, stravaPreview)
       const { profile } = applyXp(data.profile, xpGained)
@@ -228,6 +237,13 @@ function SmartLoad({ data, setData }) {
             <>
               <p className="hint">Scheda settimanale — «{planPreview.name}»:</p>
               <PlanDays days={planPreview.days} />
+              <div className="section-gap" />
+              <p className="hint">📅 Da quando vale questa scheda? (parte dal lunedì di quella settimana)</p>
+              <input
+                type="date"
+                value={startInput}
+                onChange={(e) => e.target.value && setStartInput(e.target.value)}
+              />
             </>
           )}
           {stravaPreview && (
@@ -257,6 +273,9 @@ function SmartLoad({ data, setData }) {
 export default function Plans({ data, setData }) {
   const plan = activePlan(data)
   const [editing, setEditing] = useState(false)
+  const today = todayKey()
+  const upcoming = data.plans.filter((p) => p.startDate && p.startDate > today)
+  const archived = data.plans.filter((p) => p !== plan && !upcoming.includes(p))
 
   function saveEdited(edited) {
     setData({
@@ -268,7 +287,9 @@ export default function Plans({ data, setData }) {
 
   function activateOld(id) {
     const p = data.plans.find((x) => x.id === id)
-    setData({ ...data, plans: [...data.plans.filter((x) => x.id !== id), p] })
+    // riparte da questa settimana, così vince su eventuali piani datati
+    const reactivated = { ...p, startDate: toKey(weekStart(new Date())) }
+    setData({ ...data, plans: [...data.plans.filter((x) => x.id !== id), reactivated] })
   }
 
   function deletePlan(id) {
@@ -298,10 +319,25 @@ export default function Plans({ data, setData }) {
         </SystemWindow>
       )}
 
-      {data.plans.length > 1 && (
+      {upcoming.length > 0 && (
+        <SystemWindow title="In programma">
+          {upcoming.map((p) => (
+            <div key={p.id} className="log-card">
+              <div className="log-date">parte {formatKey(p.startDate).toLowerCase()}</div>
+              <div className="log-title">{p.name}</div>
+              <PlanDays days={p.days} />
+              <div className="section-gap" />
+              <button className="btn danger small" onClick={() => deletePlan(p.id)}>
+                Elimina
+              </button>
+            </div>
+          ))}
+        </SystemWindow>
+      )}
+
+      {archived.length > 0 && (
         <SystemWindow title="Archivio piani">
-          {data.plans
-            .slice(0, -1)
+          {archived
             .slice()
             .reverse()
             .map((p) => (

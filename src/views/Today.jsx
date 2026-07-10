@@ -140,7 +140,7 @@ export default function Today({ data, setData }) {
         <DayDetail
           dayKey={selectedDay}
           logs={data.logs}
-          plan={plan}
+          plans={data.plans}
           quests={data.dailyQuests}
           ticks={data.dailyTicks}
         />
