@@ -204,22 +204,29 @@ export default function Today({ data, setData }) {
   }
 
   const showKmInput = ['run', 'bike', 'swim'].includes(freeSport)
+  const viewingOtherDay = selectedDay && selectedDay !== today
 
-  return (
-    <div className="view">
+  const header = (
+    <>
       <div className="home-header">
         <h1 className="app-title-left">ARISE</h1>
         <StreakChip weeks={weekStreak} />
       </div>
       <p className="quest-goal-label">{formatKey(today)}</p>
-
       <WeekStrip
         logs={data.logs}
         selected={selectedDay}
         onSelect={(k) => setSelectedDay(k === selectedDay ? null : k)}
       />
+    </>
+  )
 
-      {selectedDay && selectedDay !== today && (
+  // Guardando un altro giorno si vede solo il suo dettaglio: la Daily Quest
+  // e le missioni riguardano il giorno corrente.
+  if (viewingOtherDay) {
+    return (
+      <div className="view">
+        {header}
         <DayDetail
           dayKey={selectedDay}
           logs={data.logs}
@@ -227,7 +234,13 @@ export default function Today({ data, setData }) {
           quests={data.dailyQuests}
           ticks={data.dailyTicks}
         />
-      )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="view">
+      {header}
 
       <GoalRings data={data} setData={setData} />
 
