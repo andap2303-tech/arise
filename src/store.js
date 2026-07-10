@@ -5,6 +5,7 @@ import { inferSport } from './logic/sports.js'
 import { newId } from './logic/ids.js'
 import { applyXp } from './logic/xp.js'
 import { mergeStravaActivities } from './logic/strava.js'
+import { settlePenalties } from './logic/penalties.js'
 import stravaSeed from './data/strava-seed.json'
 
 const KEY = 'arise-data'
@@ -27,9 +28,10 @@ function defaultWorkoutTypes() {
 
 function defaultDailyQuests() {
   return [
-    { id: 'dq-reading', label: 'Leggere 15 minuti' },
-    { id: 'dq-pushups', label: '20 piegamenti' },
-    { id: 'dq-situps', label: '20 addominali' },
+    { id: 'dq-reading', label: 'Leggere 15 minuti', since: '2026-07-09' },
+    { id: 'dq-pushups', label: '20 piegamenti', since: '2026-07-09' },
+    { id: 'dq-situps', label: '20 addominali', since: '2026-07-09' },
+    { id: 'dq-duolingo', label: 'Una lezione di Duolingo', since: '2026-07-10' },
   ]
 }
 
@@ -83,7 +85,15 @@ function migrate(data) {
   if ((data.version || 0) < 5 && data.plans[data.plans.length - 1]?.id === 'sample-plan') {
     data.plans = data.plans.map((p) => (p.id === 'sample-plan' ? realWeekPlan() : p))
   }
-  data.version = 5
+  // v6: arriva Duolingo tra le missioni e il campo `since` (da quando una
+  // missione esiste: prima di quella data non si mostra né si punisce).
+  if ((data.version || 0) < 6) {
+    data.dailyQuests = data.dailyQuests.map((q) => (q.since ? q : { ...q, since: '2026-07-09' }))
+    if (!data.dailyQuests.some((q) => q.id === 'dq-duolingo')) {
+      data.dailyQuests.push({ id: 'dq-duolingo', label: 'Una lezione di Duolingo', since: '2026-07-10' })
+    }
+  }
+  data.version = 6
   return data
 }
 
@@ -169,10 +179,10 @@ function defaultData() {
 export function loadData() {
   try {
     const raw = localStorage.getItem(KEY)
-    if (!raw) return defaultData()
+    if (!raw) return settlePenalties(defaultData())
     const data = JSON.parse(raw)
     const def = defaultData()
-    return migrate({
+    return settlePenalties(migrate({
       ...def,
       ...data,
       profile: { ...def.profile, ...(data.profile || {}) },
@@ -181,9 +191,9 @@ export function loadData() {
       // il default è già seedato: per i dati salvati conta SOLO il loro flag,
       // altrimenti chi aveva dati pre-v3 non riceverebbe mai lo storico Strava
       stravaSeeded: data.stravaSeeded === true,
-    })
+    }))
   } catch {
-    return defaultData()
+    return settlePenalties(defaultData())
   }
 }
 

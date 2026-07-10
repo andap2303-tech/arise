@@ -1,6 +1,13 @@
 import SystemWindow from './SystemWindow.jsx'
 import SportBadge from './SportBadge.jsx'
 import { formatKey, fromKey, isoWeekday, todayKey } from '../logic/dates.js'
+import {
+  PENALTY_SINCE,
+  XP_PENALTY_MISSION,
+  XP_PENALTY_WORKOUT,
+  isOptionalDay,
+  questsForDay,
+} from '../logic/penalties.js'
 
 export function exerciseDetail(e) {
   const parts = []
@@ -11,17 +18,14 @@ export function exerciseDetail(e) {
   return parts.join(' · ')
 }
 
-// Le missioni giornaliere esistono da quando esiste l'app: prima di questa
-// data non ha senso mostrarle (né fatte né saltate).
-const MISSIONS_SINCE = '2026-07-09'
-
 function DayMissions({ dayKey, quests, ticks, isPast }) {
-  if (dayKey < MISSIONS_SINCE || quests.length === 0) return null
+  const dayQuests = questsForDay(quests, dayKey)
+  if (dayQuests.length === 0) return null
   const ticked = new Set(ticks[dayKey] || [])
   return (
     <>
       <p className="quest-goal-label" style={{ marginTop: 14 }}>MISSIONI GIORNALIERE</p>
-      {quests.map((q) => {
+      {dayQuests.map((q) => {
         const done = ticked.has(q.id)
         const missed = isPast && !done
         return (
@@ -34,7 +38,9 @@ function DayMissions({ dayKey, quests, ticks, isPast }) {
                 {q.label}
               </div>
             </div>
-            <span className="mission-xp">{done ? '+10 XP' : missed ? 'saltata' : ''}</span>
+            <span className="mission-xp" style={missed ? { color: 'var(--danger)' } : undefined}>
+              {done ? '+10 XP' : missed ? `−${XP_PENALTY_MISSION} XP` : ''}
+            </span>
           </div>
         )
       })}
@@ -70,7 +76,16 @@ export default function DayDetail({ dayKey, logs, plan, quests, ticks }) {
           </div>
         ))
       ) : isPast ? (
-        <p className="empty-note">Nessun allenamento registrato.</p>
+        planDay && !isOptionalDay(planDay) && dayKey >= PENALTY_SINCE ? (
+          <>
+            <p className="quest-title">{planDay.title}</p>
+            <p className="empty-note" style={{ color: 'var(--danger)' }}>
+              Quest fallita — nessun allenamento registrato. −{XP_PENALTY_WORKOUT} XP
+            </p>
+          </>
+        ) : (
+          <p className="empty-note">Nessun allenamento registrato.</p>
+        )
       ) : planDay ? (
         <>
           <p className="quest-goal-label">IN PROGRAMMA</p>

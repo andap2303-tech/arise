@@ -74,7 +74,9 @@ export default function DailyMissions({ data, setData }) {
       {editing ? (
         <MissionEditor
           quests={data.dailyQuests}
-          onSave={(dailyQuests) => {
+          onSave={(quests) => {
+            // le missioni nuove partono da oggi: niente penalità retroattive
+            const dailyQuests = quests.map((q) => (q.since ? q : { ...q, since: todayKey() }))
             setData({ ...data, dailyQuests })
             setEditing(false)
           }}
