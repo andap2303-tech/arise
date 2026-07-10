@@ -9,7 +9,7 @@ import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
 import { activePlan } from '../store.js'
 import { newId } from '../logic/ids.js'
-import { formatKey, isoWeekday, todayKey } from '../logic/dates.js'
+import { formatKey, fromKey, isoWeekday, todayKey } from '../logic/dates.js'
 import { XP_PER_WORKOUT, applyXp, streakBonus } from '../logic/xp.js'
 import { computeStreak, computeWeekStreak } from '../logic/streak.js'
 import { SPORTS } from '../logic/sports.js'
@@ -35,6 +35,56 @@ function StreakChip({ weeks }) {
   )
 }
 
+function DayDetail({ dayKey, logs, plan }) {
+  const today = todayKey()
+  const dayLogs = logs.filter((l) => l.date === dayKey)
+  const wd = isoWeekday(fromKey(dayKey))
+  const planDay = plan?.days.find((d) => d.weekday === wd && d.exercises.length > 0)
+  const isPast = dayKey < today
+
+  return (
+    <SystemWindow title={formatKey(dayKey)}>
+      {dayLogs.length > 0 ? (
+        dayLogs.map((l) => (
+          <div key={l.id}>
+            <SportBadge sport={l.sport} workoutType={l.workoutType} center />
+            <p className="quest-title">{l.title}</p>
+            {l.description && <p className="log-description">{l.description}</p>}
+            {l.exercises.map((e, i) => (
+              <div key={i} className={'exercise-row' + (e.done ? ' done' : '')}>
+                <span className={'check' + (e.done ? ' on' : '')}>✓</span>
+                <div className="exercise-info">
+                  <div className="exercise-name">{e.name}</div>
+                  <div className="exercise-detail">{exerciseDetail(e)}</div>
+                </div>
+              </div>
+            ))}
+            <p className="quest-warning">+{l.xpEarned} XP</p>
+          </div>
+        ))
+      ) : isPast ? (
+        <p className="empty-note">Nessun allenamento registrato.</p>
+      ) : planDay ? (
+        <>
+          <p className="quest-goal-label">IN PROGRAMMA</p>
+          <p className="quest-title">{planDay.title}</p>
+          {planDay.exercises.map((e, i) => (
+            <div key={i} className="exercise-row">
+              <span className="check">✓</span>
+              <div className="exercise-info">
+                <div className="exercise-name">{e.name}</div>
+                <div className="exercise-detail">{exerciseDetail(e)}</div>
+              </div>
+            </div>
+          ))}
+        </>
+      ) : (
+        <p className="empty-note">Nessun allenamento in programma — riposo.</p>
+      )}
+    </SystemWindow>
+  )
+}
+
 export default function Today({ data, setData }) {
   const today = todayKey()
   const weekday = isoWeekday(new Date())
@@ -44,6 +94,7 @@ export default function Today({ data, setData }) {
   const weekStreak = computeWeekStreak(data.logs, data.profile.weekStreak)
 
   const [checked, setChecked] = useState(new Set())
+  const [selectedDay, setSelectedDay] = useState(null)
   const [popup, setPopup] = useState(null)
   const [freeMode, setFreeMode] = useState(false)
   const [freeTitle, setFreeTitle] = useState('')
@@ -130,7 +181,15 @@ export default function Today({ data, setData }) {
       </div>
       <p className="quest-goal-label">{formatKey(today)}</p>
 
-      <WeekStrip logs={data.logs} />
+      <WeekStrip
+        logs={data.logs}
+        selected={selectedDay}
+        onSelect={(k) => setSelectedDay(k === selectedDay ? null : k)}
+      />
+
+      {selectedDay && selectedDay !== today && (
+        <DayDetail dayKey={selectedDay} logs={data.logs} plan={plan} />
+      )}
 
       <GoalRings data={data} setData={setData} />
 

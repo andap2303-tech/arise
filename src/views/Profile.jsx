@@ -74,8 +74,10 @@ export default function Profile({ data, setData }) {
         </div>
         <div className="stat-grid">
           <div className="stat-box">
-            <div className="stat-value">🔥 {weekStreak}</div>
-            <div className="stat-label">Settimane di fila</div>
+            <div className="stat-value" style={{ color: '#ffb547' }}>{weekStreak}</div>
+            <div className="stat-label" style={{ color: 'rgba(255, 200, 130, 0.75)' }}>
+              Settimane di fila
+            </div>
           </div>
           <div className="stat-box">
             <div className="stat-value">{data.logs.length}</div>

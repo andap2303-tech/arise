@@ -3,7 +3,7 @@ import { addDays, MONTH_NAMES, toKey, todayKey, weekStart } from '../logic/dates
 
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']
 
-export default function WeekStrip({ logs }) {
+export default function WeekStrip({ logs, selected, onSelect }) {
   const start = weekStart(new Date())
   const end = addDays(start, 6)
   const today = todayKey()
@@ -28,7 +28,16 @@ export default function WeekStrip({ logs }) {
           const log = byDate.get(key)
           const isToday = key === today
           return (
-            <div key={key} className={'week-day' + (isToday ? ' today' : '') + (log ? ' trained' : '')}>
+            <div
+              key={key}
+              className={
+                'week-day' +
+                (isToday ? ' today' : '') +
+                (log ? ' trained' : '') +
+                (selected === key ? ' selected' : '')
+              }
+              onClick={() => onSelect?.(key)}
+            >
               <span className="week-day-letter">{letter}</span>
               <span className="week-day-slot">
                 {log ? <SportIcon sport={log.sport} size={19} /> : <span className="week-day-dot" />}
