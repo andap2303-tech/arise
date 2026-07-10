@@ -15,6 +15,32 @@ self.addEventListener('activate', (e) => {
   )
 })
 
+// Notifiche push (promemoria missioni): mostrate anche ad app chiusa.
+self.addEventListener('push', (e) => {
+  let data = {}
+  try {
+    data = e.data ? e.data.json() : {}
+  } catch {
+    data = { body: e.data?.text() }
+  }
+  e.waitUntil(
+    self.registration.showNotification(data.title || 'ARISE', {
+      body: data.body || 'Completa le missioni giornaliere, Hunter.',
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-192.png',
+    }),
+  )
+})
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close()
+  e.waitUntil(
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((ws) => (ws[0] ? ws[0].focus() : self.clients.openWindow('./'))),
+  )
+})
+
 // Network-first con fallback alla cache: l'app resta usabile offline
 // ma prende subito gli aggiornamenti quando c'è rete.
 self.addEventListener('fetch', (e) => {
