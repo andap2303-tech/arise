@@ -224,7 +224,7 @@ function SmartLoad({ data, setData }) {
   }
 
   return (
-    <SystemWindow title="Carica">
+    <SystemWindow title="Carica scheda">
       {message && <p className="hint" style={{ color: 'var(--success)' }}>{message}</p>}
       {!open ? (
         <>

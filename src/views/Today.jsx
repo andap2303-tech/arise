@@ -208,7 +208,7 @@ export default function Today({ data, setData }) {
           </button>
         </SystemWindow>
       ) : (
-        <SystemWindow title={freeMode ? 'Registra allenamento' : 'Sistema'}>
+        <SystemWindow title={freeMode ? 'Registra allenamento' : 'Riposo'}>
           {!freeMode ? (
             <>
               <p className="quest-title">Giorno di riposo</p>

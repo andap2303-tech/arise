@@ -202,7 +202,7 @@ export default function History({ data, setData }) {
 
   return (
     <div className="view">
-      <SystemWindow title="Registro Hunter">
+      <SystemWindow title="Calendario">
         <div className="stat-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', marginBottom: 14 }}>
           <div className="stat-box">
             <div className="stat-value">{counts.total}</div>
@@ -257,7 +257,7 @@ export default function History({ data, setData }) {
           <DayDetail dayKey={selected} data={data} />
         ))}
 
-      <SystemWindow title="Ricerca">
+      <SystemWindow title="Ricerca attività">
         <input
           type="search"
           placeholder="Cerca per titolo o esercizio…"
