@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <>
-      {tab === 'today' && <Today data={data} setData={setData} />}
+      {tab === 'today' && <Today data={data} setData={setData} onGoToPlans={() => setTab('plans')} />}
       {tab === 'history' && <History data={data} setData={setData} />}
       {tab === 'plans' && <Plans data={data} setData={setData} />}
       {tab === 'profile' && <Profile data={data} setData={setData} />}

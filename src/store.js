@@ -95,7 +95,9 @@ function migrate(data) {
       data.dailyQuests.push({ id: 'dq-duolingo', label: 'Una lezione di Duolingo', since: '2026-07-10' })
     }
   }
-  data.version = 6
+  // v7: le missioni possono avere ricorrenza (days/everyN) e scadenza (until);
+  // i campi sono opzionali, quindi nessuna trasformazione necessaria.
+  data.version = 7
   return data
 }
 

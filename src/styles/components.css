@@ -784,6 +784,31 @@
   color: var(--glow-soft);
 }
 
+/* ===== Gestione missioni (piani) ===== */
+.mission-manage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(74, 168, 255, 0.12);
+}
+.mission-schedule {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.mission-form {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(74, 168, 255, 0.12);
+}
+.mission-form .quest-goal-label {
+  margin-bottom: 6px;
+}
+.day-toggles {
+  margin-top: 6px;
+}
+
 /* ===== Stat rows (profile) ===== */
 .stat-grid {
   display: grid;

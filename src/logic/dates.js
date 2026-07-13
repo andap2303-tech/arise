@@ -40,6 +40,11 @@ export function addDays(date, n) {
   return d
 }
 
+// Giorni interi tra due key (positivo se keyB è dopo keyA)
+export function diffDays(keyA, keyB) {
+  return Math.round((fromKey(keyB) - fromKey(keyA)) / 86400000)
+}
+
 // Lunedì della settimana di `date`
 export function weekStart(date) {
   return addDays(date, -(isoWeekday(date) - 1))

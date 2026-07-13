@@ -28,7 +28,7 @@ function StreakChip({ weeks }) {
   )
 }
 
-export default function Today({ data, setData }) {
+export default function Today({ data, setData, onGoToPlans }) {
   const today = todayKey()
   const plan = activePlan(data)
   const planDay = plannedDayForDate(data, today)
@@ -327,7 +327,7 @@ export default function Today({ data, setData }) {
         </SystemWindow>
       )}
 
-      <DailyMissions data={data} setData={setData} />
+      <DailyMissions data={data} setData={setData} onGoToPlans={onGoToPlans} />
 
       {!todayLog && planDay && !freeMode && (
         <p className="hint" style={{ textAlign: 'center' }}>

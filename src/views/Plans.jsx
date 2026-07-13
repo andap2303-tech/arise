@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import SystemWindow from '../components/SystemWindow.jsx'
+import MissionManager from '../components/MissionManager.jsx'
 import SportIcon from '../components/SportIcon.jsx'
 import { activePlan } from '../store.js'
 import { newId } from '../logic/ids.js'
@@ -339,6 +340,8 @@ export default function Plans({ data, setData }) {
           <p className="empty-note">Nessun piano. Caricane uno qui sopra.</p>
         </SystemWindow>
       )}
+
+      <MissionManager data={data} setData={setData} />
 
       {upcoming.length > 0 && (
         <SystemWindow title="In programma">

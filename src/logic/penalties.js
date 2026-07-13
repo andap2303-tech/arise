@@ -1,4 +1,4 @@
-import { addDays, fromKey, toKey, todayKey } from './dates.js'
+import { addDays, diffDays, fromKey, isoWeekday, toKey, todayKey } from './dates.js'
 import { removeXp } from './xp.js'
 import { plannedDayForDate } from './plans.js'
 
@@ -15,7 +15,14 @@ export function isOptionalDay(planDay) {
 }
 
 export function questsForDay(quests, dayKey) {
-  return quests.filter((q) => (q.since || PENALTY_SINCE) <= dayKey)
+  return quests.filter((q) => {
+    const since = q.since || PENALTY_SINCE
+    if (since > dayKey) return false
+    if (q.until && dayKey > q.until) return false
+    if (q.days && !q.days.includes(isoWeekday(fromKey(dayKey)))) return false
+    if (q.everyN && diffDays(since, dayKey) % q.everyN !== 0) return false
+    return true
+  })
 }
 
 export function missedWorkoutPenalty(data, dayKey) {
