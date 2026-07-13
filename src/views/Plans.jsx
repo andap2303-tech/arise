@@ -9,14 +9,70 @@ import { parsePlan } from '../logic/parser.js'
 import { mergeStravaActivities, parseStravaActivities } from '../logic/strava.js'
 import { applyXp } from '../logic/xp.js'
 
-function PlanDays({ days }) {
+function PlanDays({ days, onMove }) {
+  const [dragWd, setDragWd] = useState(null)
+  const [hoverWd, setHoverWd] = useState(null)
+
+  function wdAt(x, y) {
+    const el = document.elementFromPoint(x, y)?.closest('[data-wd]')
+    return el ? Number(el.dataset.wd) : null
+  }
+
+  function startDrag(e, wd) {
+    e.preventDefault()
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setDragWd(wd)
+    setHoverWd(wd)
+  }
+
+  function moveDrag(e) {
+    if (dragWd == null) return
+    setHoverWd(wdAt(e.clientX, e.clientY))
+  }
+
+  function endDrag() {
+    if (dragWd != null && hoverWd != null && hoverWd !== dragWd) onMove(dragWd, hoverWd)
+    setDragWd(null)
+    setHoverWd(null)
+  }
+
+  function cancelDrag() {
+    setDragWd(null)
+    setHoverWd(null)
+  }
+
+  function cardClass(wd, rest) {
+    return (
+      'day-card' +
+      (rest ? ' rest' : '') +
+      (dragWd === wd ? ' dragging' : '') +
+      (dragWd != null && hoverWd === wd && wd !== dragWd ? ' drop-target' : '')
+    )
+  }
+
+  const handle = (wd) =>
+    onMove && (
+      <span
+        className="drag-handle"
+        onPointerDown={(e) => startDrag(e, wd)}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        onPointerCancel={cancelDrag}
+      >
+        ⠿
+      </span>
+    )
+
   return (
     <>
       {[1, 2, 3, 4, 5, 6, 7].map((wd) => {
         const day = days.find((d) => d.weekday === wd && d.exercises.length > 0)
         return day ? (
-          <div key={wd} className="day-card">
-            <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
+          <div key={wd} className={cardClass(wd, false)} data-wd={wd}>
+            <div className="day-name">
+              {WEEKDAY_NAMES[wd - 1]}
+              {handle(wd)}
+            </div>
             <div className="day-title">
               <SportIcon sport={day.sport || 'weights'} size={16} /> {day.title}
             </div>
@@ -31,7 +87,7 @@ function PlanDays({ days }) {
             </ul>
           </div>
         ) : (
-          <div key={wd} className="day-card rest">
+          <div key={wd} className={cardClass(wd, true)} data-wd={wd}>
             <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
             <div className="day-title">Riposo</div>
           </div>
@@ -314,6 +370,25 @@ export default function Plans({ data, setData }) {
     setData({ ...data, plans: [...data.plans.filter((x) => x.id !== id), reactivated] })
   }
 
+  // Sposta (o scambia) un giorno del piano attivo su un altro weekday: cambio
+  // permanente del piano, tutte le schermate derivano da qui.
+  function moveDay(from, to) {
+    const src = plan.days.find((d) => d.weekday === from && d.exercises.length > 0)
+    if (!src) return
+    const dst = plan.days.find((d) => d.weekday === to && d.exercises.length > 0)
+    if (
+      dst &&
+      !window.confirm(`${WEEKDAY_NAMES[to - 1]} ha già «${dst.title}»: scambiare i due allenamenti?`)
+    )
+      return
+    const days = plan.days.map((d) => {
+      if (d === src) return { ...d, weekday: to }
+      if (d === dst) return { ...d, weekday: from }
+      return d
+    })
+    setData({ ...data, plans: data.plans.map((p) => (p.id === plan.id ? { ...plan, days } : p)) })
+  }
+
   function deletePlan(id) {
     if (!window.confirm('Eliminare questo piano? I workout già registrati restano nello storico.')) return
     setData({ ...data, plans: data.plans.filter((x) => x.id !== id) })
@@ -330,7 +405,8 @@ export default function Plans({ data, setData }) {
       {plan ? (
         <SystemWindow title="Piano attivo">
           <p className="quest-title">{plan.name}</p>
-          <PlanDays days={plan.days} />
+          <p className="hint">Trascina un allenamento dalla maniglia ⠿ per spostarlo su un altro giorno.</p>
+          <PlanDays days={plan.days} onMove={moveDay} />
           <button className="btn secondary" onClick={() => setEditing(true)}>
             Modifica piano
           </button>

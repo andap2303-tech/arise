@@ -1047,6 +1047,30 @@
   color: var(--text-dim);
 }
 .day-card li { padding: 1px 0; }
+.day-card .day-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.drag-handle {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  letter-spacing: 0;
+  padding: 2px 4px 2px 12px;
+}
+.day-card.dragging {
+  opacity: 0.5;
+  border-color: var(--glow-soft);
+}
+.day-card.drop-target {
+  border-color: var(--glow-soft);
+  background: rgba(74, 168, 255, 0.14);
+  box-shadow: 0 0 8px rgba(74, 168, 255, 0.35);
+}
 
 .import-area textarea {
   min-height: 140px;
