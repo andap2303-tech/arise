@@ -10,72 +10,64 @@ import { mergeStravaActivities, parseStravaActivities } from '../logic/strava.js
 import { applyXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
 
+// Interazione "Selezione System": tocchi una card e si attiva (glow + angoli),
+// dentro compaiono MODIFICA e SPOSTA; con Sposta gli altri giorni diventano
+// bersagli pulsanti e il tap sulla destinazione completa lo spostamento.
 function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit }) {
-  const [dragWd, setDragWd] = useState(null)
-  const [hoverWd, setHoverWd] = useState(null)
+  const [selectedWd, setSelectedWd] = useState(null)
+  const [moveFrom, setMoveFrom] = useState(null)
+  const interactive = Boolean(onEditDay)
 
-  function wdAt(x, y) {
-    const el = document.elementFromPoint(x, y)?.closest('[data-wd]')
-    return el ? Number(el.dataset.wd) : null
+  function tapCard(wd) {
+    if (!interactive) return
+    if (moveFrom != null) {
+      if (wd !== moveFrom) onMove(moveFrom, wd)
+      setMoveFrom(null)
+      return
+    }
+    setSelectedWd(wd === selectedWd ? null : wd)
   }
 
-  function startDrag(e, wd) {
-    e.preventDefault()
-    e.currentTarget.setPointerCapture(e.pointerId)
-    setDragWd(wd)
-    setHoverWd(wd)
+  function edit(e, wd) {
+    e.stopPropagation()
+    setSelectedWd(null)
+    onEditDay(wd)
   }
 
-  function moveDrag(e) {
-    if (dragWd == null) return
-    setHoverWd(wdAt(e.clientX, e.clientY))
-  }
-
-  function endDrag() {
-    if (dragWd != null && hoverWd != null && hoverWd !== dragWd) onMove(dragWd, hoverWd)
-    setDragWd(null)
-    setHoverWd(null)
-  }
-
-  function cancelDrag() {
-    setDragWd(null)
-    setHoverWd(null)
+  function startMove(e, wd) {
+    e.stopPropagation()
+    setSelectedWd(null)
+    setMoveFrom(wd)
   }
 
   function cardClass(wd, rest) {
     return (
       'day-card' +
       (rest ? ' rest' : '') +
-      (dragWd === wd ? ' dragging' : '') +
-      (dragWd != null && hoverWd === wd && wd !== dragWd ? ' drop-target' : '')
+      (interactive ? ' tappable' : '') +
+      (selectedWd === wd ? ' selected' : '') +
+      (moveFrom === wd ? ' move-source' : '') +
+      (moveFrom != null && wd !== moveFrom ? ' move-target' : '')
     )
   }
 
-  const actions = (wd) =>
-    (onEditDay || onMove) && (
-      <span className="day-actions">
-        {onEditDay && (
-          <button className="icon-btn" title="Modifica giorno" onClick={() => onEditDay(wd)}>
-            ✎
-          </button>
-        )}
-        {onMove && (
-          <span
-            className="icon-btn drag-handle"
-            title="Trascina su un altro giorno"
-            onPointerDown={(e) => startDrag(e, wd)}
-            onPointerMove={moveDrag}
-            onPointerUp={endDrag}
-            onPointerCancel={cancelDrag}
-          >
-            ⠿
-          </span>
-        )}
-      </span>
-    )
+  const corners = (
+    <>
+      <span className="dc-corner tl" />
+      <span className="dc-corner tr" />
+      <span className="dc-corner bl" />
+      <span className="dc-corner br" />
+    </>
+  )
 
   return (
     <>
+      {moveFrom != null && (
+        <div className="move-banner">
+          <span>◈ Scegli il giorno di destinazione</span>
+          <button className="link-btn" onClick={() => setMoveFrom(null)}>annulla</button>
+        </div>
+      )}
       {[1, 2, 3, 4, 5, 6, 7].map((wd) => {
         const day = days.find((d) => d.weekday === wd && d.exercises.length > 0)
         if (editingWd === wd) {
@@ -88,12 +80,11 @@ function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit 
             />
           )
         }
+        const selected = selectedWd === wd && moveFrom == null
         return day ? (
-          <div key={wd} className={cardClass(wd, false)} data-wd={wd}>
-            <div className="day-name">
-              {WEEKDAY_NAMES[wd - 1]}
-              {actions(wd)}
-            </div>
+          <div key={wd} className={cardClass(wd, false)} onClick={() => tapCard(wd)}>
+            {selected && corners}
+            <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
             <div className="day-title">
               <SportIcon sport={day.sport || 'weights'} size={16} /> {day.title}
             </div>
@@ -106,16 +97,25 @@ function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit 
                 </li>
               ))}
             </ul>
+            {selected && (
+              <div className="day-cmd-row">
+                <button className="day-cmd" onClick={(e) => edit(e, wd)}>◈ MODIFICA</button>
+                <button className="day-cmd" onClick={(e) => startMove(e, wd)}>◈ SPOSTA</button>
+              </div>
+            )}
+            {moveFrom != null && wd !== moveFrom && <div className="move-hint">◉ sposta qui</div>}
           </div>
         ) : (
-          <div key={wd} className={cardClass(wd, true)} data-wd={wd}>
+          <div key={wd} className={cardClass(wd, true)} onClick={() => tapCard(wd)}>
+            {selected && corners}
             <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
             <div className="day-title">Riposo</div>
-            {onEditDay && (
-              <button className="add-day-btn" onClick={() => onEditDay(wd)}>
-                + Allenamento
-              </button>
+            {selected && (
+              <div className="day-cmd-row">
+                <button className="day-cmd" onClick={(e) => edit(e, wd)}>◈ AGGIUNGI ALLENAMENTO</button>
+              </div>
             )}
+            {moveFrom != null && <div className="move-hint">◉ sposta qui</div>}
           </div>
         )
       })}
@@ -546,7 +546,7 @@ export default function Plans({ data, setData }) {
       {plan ? (
         <SystemWindow title="Piano attivo">
           <p className="quest-title">{plan.name}</p>
-          <p className="hint">Trascina un allenamento dalla maniglia ⠿ per spostarlo su un altro giorno.</p>
+          <p className="hint">Tocca un giorno per modificarlo o spostarlo.</p>
           <PlanDays
             days={plan.days}
             onMove={moveDay}
