@@ -204,18 +204,16 @@ export default function History({ data, setData }) {
       <SystemWindow title="Calendario">
         <div className="month-summary">
           <p className="quest-goal-label">ALLENAMENTI DEL MESE</p>
-          <div className="month-summary-row">
-            <span className="month-summary-num">{monthLogs.length}</span>
-            {bySport.length > 0 && (
-              <span className="month-sport-chips">
-                {bySport.map(([sport, n]) => (
-                  <span key={sport} className="month-sport-chip">
-                    <SportIcon sport={sport} size={15} /> {n}
-                  </span>
-                ))}
-              </span>
-            )}
-          </div>
+          <div className="month-summary-num">{monthLogs.length}</div>
+          {bySport.length > 0 && (
+            <div className="month-sport-chips">
+              {bySport.map(([sport, n]) => (
+                <span key={sport} className="month-sport-chip">
+                  <SportIcon sport={sport} size={15} /> {n}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         <Calendar
           logsByDate={logsByDate}

@@ -752,26 +752,23 @@
 /* ===== Riassunto mese (storico) ===== */
 .month-summary {
   margin-bottom: 12px;
+  text-align: center;
 }
 .month-summary .quest-goal-label {
   margin-bottom: 6px;
 }
-.month-summary-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 .month-summary-num {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1;
   color: var(--text);
-  min-width: 34px;
+  margin-bottom: 8px;
 }
 .month-sport-chips {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
 }
 .month-sport-chip {
