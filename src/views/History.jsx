@@ -5,7 +5,7 @@ import SportIcon from '../components/SportIcon.jsx'
 import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
 import DayDetail, { DayMissions } from '../components/DayDetail.jsx'
-import { MONTH_NAMES, formatKey, todayKey } from '../logic/dates.js'
+import { formatKey, todayKey } from '../logic/dates.js'
 import { removeXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
 
@@ -203,20 +203,19 @@ export default function History({ data, setData }) {
     <div className="view">
       <SystemWindow title="Calendario">
         <div className="month-summary">
-          <span className="month-summary-count">
-            {monthLogs.length === 0
-              ? `Nessun allenamento a ${MONTH_NAMES[month.m].toLowerCase()}`
-              : `${monthLogs.length} allenament${monthLogs.length === 1 ? 'o' : 'i'} a ${MONTH_NAMES[month.m].toLowerCase()}`}
-          </span>
-          {bySport.length > 0 && (
-            <span className="month-sport-chips">
-              {bySport.map(([sport, n]) => (
-                <span key={sport} className="month-sport-chip">
-                  <SportIcon sport={sport} size={15} /> {n}
-                </span>
-              ))}
-            </span>
-          )}
+          <p className="quest-goal-label">ALLENAMENTI DEL MESE</p>
+          <div className="month-summary-row">
+            <span className="month-summary-num">{monthLogs.length}</span>
+            {bySport.length > 0 && (
+              <span className="month-sport-chips">
+                {bySport.map(([sport, n]) => (
+                  <span key={sport} className="month-sport-chip">
+                    <SportIcon sport={sport} size={15} /> {n}
+                  </span>
+                ))}
+              </span>
+            )}
+          </div>
         </div>
         <Calendar
           logsByDate={logsByDate}
