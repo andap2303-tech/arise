@@ -18,7 +18,7 @@ export function exerciseDetail(e) {
   return parts.join(' · ')
 }
 
-function DayMissions({ dayKey, quests, ticks, isPast }) {
+export function DayMissions({ dayKey, quests, ticks, isPast }) {
   const dayQuests = questsForDay(quests, dayKey)
   if (dayQuests.length === 0) return null
   const ticked = new Set(ticks[dayKey] || [])

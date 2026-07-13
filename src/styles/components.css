@@ -248,6 +248,12 @@
   padding: 10px 8px 8px;
   margin-bottom: 14px;
 }
+.week-strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 .week-strip-label {
   text-align: center;
   font-family: var(--font-display);
@@ -255,7 +261,19 @@
   font-weight: 700;
   letter-spacing: 0.25em;
   color: var(--glow-soft);
-  margin-bottom: 8px;
+  cursor: pointer;
+}
+.week-strip-label.off-week {
+  color: rgba(255, 200, 130, 0.85);
+}
+.week-nav {
+  background: none;
+  border: none;
+  color: var(--glow-soft);
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 10px;
+  cursor: pointer;
 }
 .week-strip-days {
   display: grid;

@@ -4,8 +4,8 @@ import Calendar from '../components/Calendar.jsx'
 import SportIcon from '../components/SportIcon.jsx'
 import SportBadge from '../components/SportBadge.jsx'
 import WorkoutTypeChips from '../components/WorkoutTypeChips.jsx'
-import DayDetail from '../components/DayDetail.jsx'
-import { MONTH_NAMES, formatKey } from '../logic/dates.js'
+import DayDetail, { DayMissions } from '../components/DayDetail.jsx'
+import { MONTH_NAMES, formatKey, todayKey } from '../logic/dates.js'
 import { removeXp } from '../logic/xp.js'
 import { SPORTS } from '../logic/sports.js'
 
@@ -255,6 +255,12 @@ export default function History({ data, setData }) {
                 />
               ),
             )}
+            <DayMissions
+              dayKey={selected}
+              quests={data.dailyQuests}
+              ticks={data.dailyTicks}
+              isPast={selected < todayKey()}
+            />
           </SystemWindow>
         ) : (
           <DayDetail dayKey={selected} data={data} />

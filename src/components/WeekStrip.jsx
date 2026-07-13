@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import SportIcon from './SportIcon.jsx'
 import { addDays, MONTH_NAMES, toKey, todayKey, weekStart } from '../logic/dates.js'
 import { isMissedDay } from '../logic/penalties.js'
@@ -5,7 +6,9 @@ import { isMissedDay } from '../logic/penalties.js'
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']
 
 export default function WeekStrip({ data, logs, selected, onSelect }) {
-  const start = weekStart(new Date())
+  const [offset, setOffset] = useState(0)
+  const touchX = useRef(null)
+  const start = weekStart(addDays(new Date(), offset * 7))
   const end = addDays(start, 6)
   const today = todayKey()
 
@@ -19,9 +22,31 @@ export default function WeekStrip({ data, logs, selected, onSelect }) {
     if (!byDate.has(l.date)) byDate.set(l.date, l)
   }
 
+  function onTouchStart(e) {
+    touchX.current = e.touches[0].clientX
+  }
+
+  function onTouchEnd(e) {
+    if (touchX.current == null) return
+    const dx = e.changedTouches[0].clientX - touchX.current
+    touchX.current = null
+    if (dx > 45) setOffset((o) => o - 1)
+    else if (dx < -45) setOffset((o) => o + 1)
+  }
+
   return (
-    <div className="week-strip">
-      <div className="week-strip-label">{label.toUpperCase()}</div>
+    <div className="week-strip" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div className="week-strip-header">
+        <button className="week-nav" onClick={() => setOffset((o) => o - 1)}>‹</button>
+        <div
+          className={'week-strip-label' + (offset !== 0 ? ' off-week' : '')}
+          onClick={() => setOffset(0)}
+          title={offset !== 0 ? 'Torna alla settimana corrente' : undefined}
+        >
+          {label.toUpperCase()}
+        </div>
+        <button className="week-nav" onClick={() => setOffset((o) => o + 1)}>›</button>
+      </div>
       <div className="week-strip-days">
         {DOW.map((letter, i) => {
           const date = addDays(start, i)
