@@ -8,8 +8,9 @@ import { WEEKDAY_NAMES, addDays, formatKey, todayKey, toKey, weekStart } from '.
 import { parsePlan } from '../logic/parser.js'
 import { mergeStravaActivities, parseStravaActivities } from '../logic/strava.js'
 import { applyXp } from '../logic/xp.js'
+import { SPORTS } from '../logic/sports.js'
 
-function PlanDays({ days, onMove }) {
+function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit }) {
   const [dragWd, setDragWd] = useState(null)
   const [hoverWd, setHoverWd] = useState(null)
 
@@ -67,6 +68,16 @@ function PlanDays({ days, onMove }) {
     <>
       {[1, 2, 3, 4, 5, 6, 7].map((wd) => {
         const day = days.find((d) => d.weekday === wd && d.exercises.length > 0)
+        if (editingWd === wd) {
+          return (
+            <DayEditor
+              key={wd}
+              day={day || { weekday: wd, title: '', sport: 'weights', exercises: [] }}
+              onSave={onSaveDay}
+              onCancel={onCancelEdit}
+            />
+          )
+        }
         return day ? (
           <div key={wd} className={cardClass(wd, false)} data-wd={wd}>
             <div className="day-name">
@@ -85,15 +96,126 @@ function PlanDays({ days, onMove }) {
                 </li>
               ))}
             </ul>
+            {onEditDay && (
+              <button className="goal-edit-btn" onClick={() => onEditDay(wd)}>✎ modifica</button>
+            )}
           </div>
         ) : (
           <div key={wd} className={cardClass(wd, true)} data-wd={wd}>
             <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
             <div className="day-title">Riposo</div>
+            {onEditDay && (
+              <button className="goal-edit-btn" onClick={() => onEditDay(wd)}>+ aggiungi allenamento</button>
+            )}
           </div>
         )
       })}
     </>
+  )
+}
+
+// Editor di un singolo giorno del piano attivo: titolo, sport, esercizi con
+// note. Titolo vuoto e nessun esercizio = il giorno torna riposo.
+function DayEditor({ day, onSave, onCancel }) {
+  const [title, setTitle] = useState(day.title || '')
+  const [sport, setSport] = useState(day.sport || 'weights')
+  const [exercises, setExercises] = useState(() =>
+    day.exercises.length > 0
+      ? day.exercises.map((e) => ({ ...e }))
+      : [{ name: '', sets: '', reps: '', weight: '', notes: '' }],
+  )
+
+  function updateEx(i, field, value) {
+    setExercises((prev) => prev.map((e, j) => (j === i ? { ...e, [field]: value } : e)))
+  }
+
+  function save() {
+    const clean = exercises
+      .filter((e) => String(e.name).trim())
+      .map((e) => ({ ...e, name: e.name.trim() }))
+    onSave({
+      ...day,
+      title: title.trim() || (clean.length > 0 ? SPORTS[sport].label : ''),
+      sport,
+      exercises: clean,
+    })
+  }
+
+  return (
+    <div className="day-card editing">
+      <div className="day-name">{WEEKDAY_NAMES[day.weekday - 1]}</div>
+      <div className="sport-chips" style={{ margin: '8px 0' }}>
+        {Object.entries(SPORTS).map(([key, s]) => (
+          <button
+            key={key}
+            className={'sport-chip' + (sport === key ? ' on' : '')}
+            onClick={() => setSport(key)}
+          >
+            <SportIcon sport={key} size={16} /> {s.label}
+          </button>
+        ))}
+      </div>
+      <input
+        type="text"
+        placeholder="Titolo workout (vuoto = riposo)"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        style={{ margin: '6px 0' }}
+      />
+      {exercises.map((e, i) => (
+        <div key={i} className="edit-ex-block">
+          <div className="edit-ex-row">
+            <input
+              className="ex-name"
+              type="text"
+              placeholder="Esercizio"
+              value={e.name}
+              onChange={(ev) => updateEx(i, 'name', ev.target.value)}
+            />
+            <input
+              className="ex-num"
+              type="text"
+              placeholder="Serie"
+              value={e.sets}
+              onChange={(ev) => updateEx(i, 'sets', ev.target.value)}
+            />
+            <input
+              className="ex-num"
+              type="text"
+              placeholder="Rip."
+              value={e.reps}
+              onChange={(ev) => updateEx(i, 'reps', ev.target.value)}
+            />
+            <button
+              className="remove-ex"
+              onClick={() => setExercises((p) => p.filter((_, j) => j !== i))}
+            >
+              ✕
+            </button>
+          </div>
+          <input
+            className="ex-notes"
+            type="text"
+            placeholder="Note (es. ritmo 5:16/km)"
+            value={e.notes || ''}
+            onChange={(ev) => updateEx(i, 'notes', ev.target.value)}
+          />
+        </div>
+      ))}
+      <button
+        className="btn secondary small"
+        onClick={() =>
+          setExercises((p) => [...p, { name: '', sets: '', reps: '', weight: '', notes: '' }])
+        }
+      >
+        + Esercizio
+      </button>
+      <div className="section-gap" />
+      <div className="btn-row">
+        <button className="btn secondary" onClick={onCancel}>Annulla</button>
+        <button className="btn" onClick={save}>Salva</button>
+      </div>
+    </div>
   )
 }
 
@@ -351,6 +473,7 @@ function SmartLoad({ data, setData }) {
 export default function Plans({ data, setData }) {
   const plan = activePlan(data)
   const [editing, setEditing] = useState(false)
+  const [editingWd, setEditingWd] = useState(null)
   const today = todayKey()
   const upcoming = data.plans.filter((p) => p.startDate && p.startDate > today)
   const archived = data.plans.filter((p) => p !== plan && !upcoming.includes(p))
@@ -389,6 +512,15 @@ export default function Plans({ data, setData }) {
     setData({ ...data, plans: data.plans.map((p) => (p.id === plan.id ? { ...plan, days } : p)) })
   }
 
+  // Salva la modifica di un singolo giorno del piano attivo: senza esercizi
+  // il giorno torna riposo.
+  function saveDay(day) {
+    const others = plan.days.filter((d) => d.weekday !== day.weekday)
+    const days = day.exercises.length > 0 ? [...others, day] : others
+    setData({ ...data, plans: data.plans.map((p) => (p.id === plan.id ? { ...plan, days } : p)) })
+    setEditingWd(null)
+  }
+
   function deletePlan(id) {
     if (!window.confirm('Eliminare questo piano? I workout già registrati restano nello storico.')) return
     setData({ ...data, plans: data.plans.filter((x) => x.id !== id) })
@@ -406,7 +538,14 @@ export default function Plans({ data, setData }) {
         <SystemWindow title="Piano attivo">
           <p className="quest-title">{plan.name}</p>
           <p className="hint">Trascina un allenamento dalla maniglia ⠿ per spostarlo su un altro giorno.</p>
-          <PlanDays days={plan.days} onMove={moveDay} />
+          <PlanDays
+            days={plan.days}
+            onMove={moveDay}
+            editingWd={editingWd}
+            onEditDay={setEditingWd}
+            onSaveDay={saveDay}
+            onCancelEdit={() => setEditingWd(null)}
+          />
           <button className="btn secondary" onClick={() => setEditing(true)}>
             Modifica piano
           </button>
