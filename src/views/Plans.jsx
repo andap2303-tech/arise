@@ -51,16 +51,26 @@ function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit 
     )
   }
 
-  const handle = (wd) =>
-    onMove && (
-      <span
-        className="drag-handle"
-        onPointerDown={(e) => startDrag(e, wd)}
-        onPointerMove={moveDrag}
-        onPointerUp={endDrag}
-        onPointerCancel={cancelDrag}
-      >
-        ⠿
+  const actions = (wd) =>
+    (onEditDay || onMove) && (
+      <span className="day-actions">
+        {onEditDay && (
+          <button className="icon-btn" title="Modifica giorno" onClick={() => onEditDay(wd)}>
+            ✎
+          </button>
+        )}
+        {onMove && (
+          <span
+            className="icon-btn drag-handle"
+            title="Trascina su un altro giorno"
+            onPointerDown={(e) => startDrag(e, wd)}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={cancelDrag}
+          >
+            ⠿
+          </span>
+        )}
       </span>
     )
 
@@ -82,7 +92,7 @@ function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit 
           <div key={wd} className={cardClass(wd, false)} data-wd={wd}>
             <div className="day-name">
               {WEEKDAY_NAMES[wd - 1]}
-              {handle(wd)}
+              {actions(wd)}
             </div>
             <div className="day-title">
               <SportIcon sport={day.sport || 'weights'} size={16} /> {day.title}
@@ -96,16 +106,15 @@ function PlanDays({ days, onMove, editingWd, onEditDay, onSaveDay, onCancelEdit 
                 </li>
               ))}
             </ul>
-            {onEditDay && (
-              <button className="goal-edit-btn" onClick={() => onEditDay(wd)}>✎ modifica</button>
-            )}
           </div>
         ) : (
           <div key={wd} className={cardClass(wd, true)} data-wd={wd}>
             <div className="day-name">{WEEKDAY_NAMES[wd - 1]}</div>
             <div className="day-title">Riposo</div>
             {onEditDay && (
-              <button className="goal-edit-btn" onClick={() => onEditDay(wd)}>+ aggiungi allenamento</button>
+              <button className="add-day-btn" onClick={() => onEditDay(wd)}>
+                + Allenamento
+              </button>
             )}
           </div>
         )
